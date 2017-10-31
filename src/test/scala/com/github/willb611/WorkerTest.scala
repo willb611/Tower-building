@@ -9,5 +9,8 @@ class WorkerTest extends FunSuite {
     val time = 1
     worker.doWork(time)
     assert(tower.height >= 1)
+
+    worker.doWork(time*2)
+    assert(tower.height >= 2)
   }
 }
