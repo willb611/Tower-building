@@ -1,5 +1,7 @@
 package com.github.willb611
 
+import com.github.willb611.EnvironmentEffects.EnvironmentEffect
+
 
 class Tower() {
   val defaultColor = "FFFFFF"
@@ -15,5 +17,9 @@ class Tower() {
   def addBlock(): Tower = {
     addBlock(defaultColor)
     this
+  }
+
+  def environmentEffect(effect: EnvironmentEffect) = {
+    blocks = blocks.drop(1)
   }
 }

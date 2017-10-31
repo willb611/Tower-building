@@ -19,4 +19,10 @@ class TowerTest extends FunSuite {
     val newerTower = tower.addBlock(redColor)
     assert(newerTower.lastColor == redColor)
   }
+
+  test("Random environment can damage tower") {
+    val tower = new Tower().addBlock(redColor)
+    tower.environmentEffect(EnvironmentEffects.Lightning)
+    assert(tower.height() == 0)
+  }
 }
