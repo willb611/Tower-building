@@ -4,6 +4,7 @@ import org.scalatest.FunSuite
 
 class TowerTest extends FunSuite {
   val greenColor = "green"
+  val redColor = "red"
 
   test("Add block gives tower height") {
     val tower = new Tower
@@ -15,7 +16,7 @@ class TowerTest extends FunSuite {
     val tower = new Tower().addBlock(greenColor)
     assert(tower.lastColor == greenColor)
 
-    val newerTower = tower.addBlock("red")
-    assert(newerTower.lastColor == "red")
+    val newerTower = tower.addBlock(redColor)
+    assert(newerTower.lastColor == redColor)
   }
 }
