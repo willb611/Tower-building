@@ -9,3 +9,4 @@ Started out as a code kata. See tasks/test below
 4. Random environment can damage tower
 5. Many workers means more work
 6. Worker timer makes workers do work
+7. Worker timer makes effects happen occasionaly
