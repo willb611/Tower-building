@@ -20,6 +20,6 @@ class WorkerTest extends FunSuite {
     val w2 = new Worker(tower)
     w1.doWork(1)
     w2.doWork(2)
-    assert(tower.height() >= 2)
+    assert(tower.height >= 2)
   }
 }
