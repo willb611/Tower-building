@@ -10,8 +10,13 @@ class Environment(val random: Random) {
   def this() = this(new Random)
 
   def applyAnyEffects(worker: Worker): Boolean = {
-    // do nothing to workers
-    false
+    val applyEffect = random.nextBoolean()
+    if (applyEffect) {
+      val effect = EnvironmentEffects.Lightning
+      println("[Environment] " + worker + ", will be affected by " + effect)
+      worker.environmentEffect(effect)
+    }
+    applyEffect
   }
 
   def applyAnyEffects(tower: Tower): Boolean = {

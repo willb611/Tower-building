@@ -1,5 +1,6 @@
 package com.github.willb611
 
+import com.github.willb611.EnvironmentEffects.EnvironmentEffect
 import org.scalatest.FunSuite
 
 class WorkerTest extends FunSuite {
@@ -30,5 +31,13 @@ class WorkerTest extends FunSuite {
     w1.doWork(1)
     w2.doWork(2)
     assert(tower.height >= 2)
+  }
+
+  test("Worker does nothing for at least 1 time after hit by lightning") {
+    val tower = new Tower
+    val worker = new Worker(tower)
+    worker.environmentEffect(EnvironmentEffects.Lightning)
+    worker.doWork(1)
+    assert(tower.height == 0)
   }
 }

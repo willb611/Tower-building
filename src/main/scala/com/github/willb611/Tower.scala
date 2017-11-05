@@ -14,8 +14,8 @@ object Tower {
 }
 
 class Tower() {
-  private var blocks: List[Color] = List()
   private val id = Tower.nextId()
+  private var blocks: List[Color] = List()
 
   def height(): Int = blocks.length
 
