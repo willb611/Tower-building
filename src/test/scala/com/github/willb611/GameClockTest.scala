@@ -13,7 +13,7 @@ class GameClockTest extends FunSuite with MockFactory {
     assert(tower.height >= 1)
   }
 
-  test("Timer applies random effects occasionaly") {
+  test("Timer uses environment to apply effects") {
     val tower = new Tower
     val worker = new Worker(tower)
     val gameClock = new GameClock
@@ -27,10 +27,5 @@ class GameClockTest extends FunSuite with MockFactory {
 
     // run
     gameClock.runForTime(1)
-
-    // // verify
-    // (envMock.applyAnyEffects(_)).verify(worker)
-    // (envMock.applyAnyEffects(_: Worker)).verify(worker)
-    // envMock.verify(worker)
   }
 }

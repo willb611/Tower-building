@@ -1,19 +1,31 @@
 package com.github.willb611
 
-import com.github.willb611.EnvironmentEffects.EnvironmentEffect
+import scala.util.Random
 
 object Environment {
   var Default = new Environment
 }
 
-class Environment {
+class Environment(val random: Random) {
+  def this() = this(new Random)
+
   def applyAnyEffects(worker: Worker): Boolean = {
     // do nothing to workers
     false
   }
 
   def applyAnyEffects(tower: Tower): Boolean = {
-    tower.environmentEffect(EnvironmentEffects.Lightning)
-    true
+    val applyEffect = random.nextBoolean()
+    if (applyEffect) {
+      val effect = EnvironmentEffects.Lightning
+      println("[Environment] " + tower + ", will be affected by " + effect)
+      tower.environmentEffect(effect)
+    }
+    applyEffect
   }
+}
+
+object EnvironmentEffects {
+  sealed trait EnvironmentEffect
+  case object Lightning extends EnvironmentEffect
 }

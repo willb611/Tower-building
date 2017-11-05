@@ -2,7 +2,7 @@
 Started out as a code kata. See tasks/test below
 
 
-#### Tests forthe kata
+#### Tests for the kata
 1. Add block gives tower height
 2. Add coloured block saves latest color
 3. Worker adds blocks
