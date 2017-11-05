@@ -52,16 +52,15 @@ class Tower() {
     colorCountMap
   }
 
-  // private def SwapColorCountMap(colorCountMap: Map[Color, Int]): Map[Int, Color] = {
-  //   (HashMap() ++ colorCountMap.map(_.swap))    
-  // }
+  private def swapColorCountMap(colorCountMap: Map[Color, Int]): Map[Int, Color] = {
+    (HashMap() ++ colorCountMap.map(_.swap))
+  }
 
   private def highestPercentColorFromMap(colorCountMap: Map[Color, Int]): Option[Color] = {
-    var highestCounts = (HashMap() ++ colorCountMap.map(_.swap))
-    
+    var highestCounts = swapColorCountMap(colorCountMap)
     var sortedByCount: SortedSet[Int] = SortedSet()
     sortedByCount = (sortedByCount ++ highestCounts.keySet)
-    println(sortedByCount + ", " + sortedByCount.getClass())
+
     val key = sortedByCount.lastKey
     highestCounts.get(key)
   }
@@ -79,10 +78,15 @@ class Tower() {
   }
 
   override def toString(): String = {
-    "[Tower] " + id + " h: " + height + ""
+    val prefix = "[Tower] " + id + " h: " + height
+    if (highestPercentColor != None) {
+      prefix + ", colored:" + highestPercentColor.get
+    } else {
+      prefix
+    }
   }
 
-  def consoleOutputString(): String = {
+  def consoleOutputString(): String = { 
     highestPercentColor.getOrElse(Color.RESET).ansiCode + toString
   }
 }
