@@ -6,11 +6,11 @@ class GameClock() {
   var environment = Environment.Default;
 
   def withWorker(worker: Worker): Unit = {
-    workers = List(worker) ++ workers
+    workers = worker :: workers
   }
 
   def withTower(tower: Tower): Unit = {
-    towers = List(tower) ++ towers
+    towers = tower :: towers
   }
 
   def withEnvironment(env: Environment): Unit = {

@@ -20,10 +20,10 @@ class TowerGame {
   def setup(): Unit = {
     for (towersCreated <- 0 until TOWERS_TO_MAKE) {
       var tower = new Tower
-      towers = towers ++ List(tower)
+      towers = tower :: towers
       for (workersCreated <- 0 until WORKERS_PER_TOWER) {
         var worker = new Worker(tower)
-        workers = workers ++ List(worker)
+        workers = worker :: workers
         clock.withWorker(worker)
       }
       clock.withTower(tower)

@@ -1,11 +1,22 @@
 package com.github.willb611
 
+import scala.util.Random
+
 object Color {
-  val GREEN: Color = new Color("green", Console.GREEN)
-  val RED: Color = new Color("red", Console.RED)
+  val GREEN: Color = new Color("GREEN", Console.GREEN)
+  val RED: Color = new Color("RED", Console.RED)
+  val YELLOW: Color = new Color("YELLOW", Console.YELLOW)
+  val BLUE: Color = new Color("BLUE", Console.BLUE)
+  val MAGENTA: Color = new Color("MAGENTA", Console.MAGENTA)
+  val CYAN: Color = new Color("CYAN", Console.CYAN)
+
+  val ansiColors: List[Color] = List(RED, GREEN, YELLOW,
+      BLUE, MAGENTA, CYAN)
+  val randomGenerator: Random = new Random
 
   def randomColor(): Color = {
-    Color.RED
+    var index: Int = randomGenerator.nextInt(ansiColors.length)
+    ansiColors(index)
   }
 }
 

@@ -14,13 +14,13 @@ object Tower {
 }
 
 class Tower() {
-  val id = Tower.nextId()
-  var blocks: List[Color] = List()
+  private var blocks: List[Color] = List()
+  private val id = Tower.nextId()
 
   def height(): Int = blocks.length
 
   def lastColor(): Option[Color] = {
-    if (blocks.length > 0) {
+    if (height > 0) {
       Some(blocks.head)
     } else {
       None
@@ -28,7 +28,7 @@ class Tower() {
   }
 
   def addBlock(str: Color): Tower = {
-    blocks = List(str) ++ blocks
+    blocks = str :: blocks
     this
   }
   def addBlock(): Tower = {
