@@ -48,9 +48,7 @@ class Tower() {
     if (lastColor.isEmpty) {
       toString
     } else {
-      var ansi = lastColor.get.ansiCode
-      println("Using ansi code:" + ansi)
-      ansi + toString
+      lastColor.get.ansiCode + toString
     }
   }
 }
