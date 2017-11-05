@@ -3,8 +3,8 @@ package com.github.willb611
 import org.scalatest.FunSuite
 
 class TowerTest extends FunSuite {
-  val greenColor = Color.GREEN
-  val redColor = Color.RED
+  val green = Color.GREEN
+  val red = Color.RED
 
   test("Add block gives tower height") {
     val tower = new Tower
@@ -13,15 +13,15 @@ class TowerTest extends FunSuite {
   }
 
   test("Add coloured block saves latest color") {
-    val tower = new Tower().addBlock(greenColor)
-    assert(tower.lastColor.getOrElse(None) == greenColor)
+    val tower = new Tower().addBlock(green)
+    assert(tower.lastColor.getOrElse(None) == green)
 
-    val newerTower = tower.addBlock(redColor)
-    assert(newerTower.lastColor.getOrElse(None) == redColor)
+    val newerTower = tower.addBlock(red)
+    assert(newerTower.lastColor.getOrElse(None) == red)
   }
 
   test("Lightning environment affect can damage tower") {
-    val tower = new Tower().addBlock(redColor)
+    val tower = new Tower().addBlock(red)
     tower.environmentEffect(EnvironmentEffects.Lightning)
     assert(tower.height() == 0)
   }
@@ -35,5 +35,19 @@ class TowerTest extends FunSuite {
     val tower = new Tower
     tower.environmentEffect(EnvironmentEffects.Lightning)
     assert(tower.height == 0)
+  }
+
+  test("highestPercentColor should return color which has most number of blocks"
+    + " in the tower") {
+    val tower = new Tower
+    tower.addBlock(red)
+    tower.addBlock(red)
+    tower.addBlock(green)
+    assert(tower.highestPercentColor.getOrElse(green) == red)
+  }
+  test("highestPercentColor on empty tower shouldn't fail"
+    + " in the tower") {
+    val tower = new Tower
+    assert(tower.highestPercentColor == None)
   }
 }

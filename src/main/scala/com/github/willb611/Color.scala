@@ -9,6 +9,7 @@ object Color {
   val BLUE: Color = new Color("BLUE", Console.BLUE)
   val MAGENTA: Color = new Color("MAGENTA", Console.MAGENTA)
   val CYAN: Color = new Color("CYAN", Console.CYAN)
+  val RESET: Color = new Color("RESET", Console.RESET)
 
   val ansiColors: List[Color] = List(RED, GREEN, YELLOW,
       BLUE, MAGENTA, CYAN)

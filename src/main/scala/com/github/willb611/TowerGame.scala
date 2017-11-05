@@ -32,7 +32,7 @@ class TowerGame {
 
   def run(): Unit = {
     printState()
-    for (cnt <- 0 until 5) {
+    for (cnt <- 0 until 2) {
       println("[TowerGame] Sleeping..")
       Thread.sleep(TWO_SECONDS)
       clock.runForTime(1)
