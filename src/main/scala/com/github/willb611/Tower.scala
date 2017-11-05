@@ -79,7 +79,10 @@ class Tower() {
   override def toString: String = {
     val prefix = "[Tower] id=" + id + ",h=" + height
     if (highestPercentColor().isDefined) {
-      prefix + ",colored=" + highestPercentColor().get
+      var result = prefix + ",colored=" + highestPercentColor().get + ",blocks={"
+      result += blocks mkString ","
+      result += "}"
+      result
     } else {
       prefix
     }

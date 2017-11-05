@@ -1,15 +1,17 @@
 package com.github.willb611
 
-object TowerGame {
+import com.typesafe.scalalogging.LazyLogging
+
+object TowerGame extends LazyLogging {
   def main(args: Array[String]): Unit = {
-    println("Hello Tower")
+    logger.debug("Hello Tower")
     val game = new TowerGame
     game.setup()
     game.run()
   }
 }
 
-class TowerGame {
+class TowerGame extends LazyLogging {
   val TWO_SECONDS: Int = 2000
   val WORKERS_PER_TOWER: Int = 5
   val TOWERS_TO_MAKE: Int = 5
@@ -31,21 +33,21 @@ class TowerGame {
   }
 
   def run(): Unit = {
-    printState()
+    logState()
     for (_ <- 0 until 2) {
-      println("[TowerGame] Sleeping..")
+      logger.info("Sleeping..")
       Thread.sleep(TWO_SECONDS)
       clock.runForTime(1)
-      printState()
+      logState()
     }
   }
 
-  def printState(): Unit = {
-    println("Workers: " + builders.length)
-    println("Towers list: " + towers.length)
+  def logState(): Unit = {
+    logger.info("Workers: " + builders.length)
+    logger.info("Towers list: " + towers.length)
     for (t <- towers) {
-      println(t.consoleOutputString())
+      logger.info(t.consoleOutputString())
     }
-    print(Console.RESET)
+    logger.info(Console.RESET)
   }
 }

@@ -1,19 +1,21 @@
 package com.github.willb611
 
+import com.typesafe.scalalogging.LazyLogging
+
 import scala.util.Random
 
 object Environment {
   var Default = new Environment
 }
 
-class Environment(val random: Random) {
+class Environment(val random: Random) extends LazyLogging {
   def this() = this(new Random)
 
   def applyAnyEffects(builder: Builder): Boolean = {
     val applyEffect = random.nextBoolean()
     if (applyEffect) {
       val effect = EnvironmentEffects.Lightning
-      println("[Environment] " + builder + ", will be affected by " + effect)
+      logger.debug(s"$builder, will be affected by $effect")
       builder.environmentEffect(effect)
     }
     applyEffect
@@ -23,7 +25,7 @@ class Environment(val random: Random) {
     val applyEffect = random.nextBoolean()
     if (applyEffect) {
       val effect = EnvironmentEffects.Lightning
-      println("[Environment] " + tower + ", will be affected by " + effect)
+      logger.debug(s"$tower, will be affected by $effect")
       tower.environmentEffect(effect)
     }
     applyEffect
