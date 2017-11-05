@@ -7,7 +7,7 @@ object Worker {
 }
 
 class Worker(val tower: Tower, val colorToUseForBlocks: Color) {
-  def this(tower: Tower) = this(tower, Worker.nextColor())
+  def this(tower: Tower) = this(tower, Color.randomColor())
 
   def doWork(time: Int) = {
     for (workDone <- 0 until time) {

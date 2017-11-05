@@ -44,7 +44,8 @@ class TowerGame {
     println("Workers: " + workers.length)
     println("Towers list: " + towers.length)
     for (t <- towers) {
-      println(t)
+      println(t.consoleOutputString)
     }
+    print(Console.RESET)
   }
 }

@@ -18,6 +18,7 @@ class Tower() {
   var blocks: List[Color] = List()
 
   def height(): Int = blocks.length
+
   def lastColor(): Option[Color] = {
     if (blocks.length > 0) {
       Some(blocks.head)
@@ -39,6 +40,17 @@ class Tower() {
   }
 
   override def toString(): String = {
-    "[Tower] " + id + " h: " + height + ", lastColor: " + lastColor
+    "[Tower] " + id + " h: " + height + 
+      ", lastColor: " + lastColor.getOrElse("n/a")
+  }
+
+  def consoleOutputString(): String = {
+    if (lastColor.isEmpty) {
+      toString
+    } else {
+      var ansi = lastColor.get.ansiCode
+      println("Using ansi code:" + ansi)
+      ansi + toString
+    }
   }
 }
