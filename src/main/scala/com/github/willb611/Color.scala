@@ -25,7 +25,7 @@ class Color(val hexVal: String, val ansiCode: String) {
   def this(hex: String) = this(hex, "")
   def this() = this("FFFFFF")
 
-  override def toString(): String = {
+  override def toString: String = {
     hexVal
   }
 }

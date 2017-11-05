@@ -9,12 +9,12 @@ object Environment {
 class Environment(val random: Random) {
   def this() = this(new Random)
 
-  def applyAnyEffects(worker: Worker): Boolean = {
+  def applyAnyEffects(builder: Builder): Boolean = {
     val applyEffect = random.nextBoolean()
     if (applyEffect) {
       val effect = EnvironmentEffects.Lightning
-      println("[Environment] " + worker + ", will be affected by " + effect)
-      worker.environmentEffect(effect)
+      println("[Environment] " + builder + ", will be affected by " + effect)
+      builder.environmentEffect(effect)
     }
     applyEffect
   }

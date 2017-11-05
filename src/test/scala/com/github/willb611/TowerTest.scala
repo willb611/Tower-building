@@ -26,12 +26,12 @@ class TowerTest extends FunSuite {
     assert(tower.height() == 0)
   }
 
-  test("LastColor doesnt fail if empty tower") {
+  test("LastColor doesn't fail if empty tower") {
     val tower = new Tower
     assert(tower.lastColor() != null)
   }
 
-  test("Lightning environment affect doesnt apply to empty tower") {
+  test("Lightning environment affect doesn't apply to empty tower") {
     val tower = new Tower
     tower.environmentEffect(EnvironmentEffects.Lightning)
     assert(tower.height == 0)

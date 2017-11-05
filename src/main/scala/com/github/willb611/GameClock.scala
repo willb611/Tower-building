@@ -1,12 +1,12 @@
 package com.github.willb611
 
 class GameClock() {
-  var workers: List[Worker] = List()
+  var builders: List[Builder] = List()
   var towers: List[Tower] = List()
   var environment: Environment = Environment.Default
 
-  def withWorker(worker: Worker): Unit = {
-    workers = worker :: workers
+  def withBuilder(builder: Builder): Unit = {
+    builders = builder :: builders
   }
 
   def withTower(tower: Tower): Unit = {
@@ -18,9 +18,9 @@ class GameClock() {
   }
 
   def runForTime(time: Int): Unit = {
-    for (worker <- workers) {
-      worker.doWork(time)
-      environment.applyAnyEffects(worker)
+    for (builder <- builders) {
+      builder.doWork(time)
+      environment.applyAnyEffects(builder)
     }
     for (tower <- towers) {
       environment.applyAnyEffects(tower)

@@ -2,22 +2,22 @@ package com.github.willb611
 
 import com.github.willb611.EnvironmentEffects.EnvironmentEffect
 
-object Worker {
+object Builder {
   private var instancesMadeSoFar: Int = 0
 
   def nextColor(): Color = {
     new Color
   }
   def nextId(): Int = {
-    var cpy = instancesMadeSoFar
+    val cpy = instancesMadeSoFar
     instancesMadeSoFar += 1
     cpy
   }
 }
 
-class Worker(val tower: Tower, val colorToUseForBlocks: Color) {
+class Builder(val tower: Tower, val colorToUseForBlocks: Color) {
   def this(tower: Tower) = this(tower, Color.randomColor())
-  private val id = Worker.nextId()
+  private val id = Builder.nextId()
 
   var activeEffects: List[EnvironmentEffect] = List()
 
@@ -41,7 +41,7 @@ class Worker(val tower: Tower, val colorToUseForBlocks: Color) {
     activeEffects = effect :: activeEffects
   }
 
-  override def toString(): String = {
-    "[Worker] " + id + " color: " + colorToUseForBlocks
+  override def toString: String = {
+    "[Builder] " + id + " color: " + colorToUseForBlocks
   }
 }

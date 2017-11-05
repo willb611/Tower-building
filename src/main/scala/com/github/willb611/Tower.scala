@@ -72,11 +72,11 @@ class Tower() {
     addBlock(Tower.DEFAULT_COLOR)
   }
 
-  def environmentEffect(effect: EnvironmentEffect) = {
+  def environmentEffect(effect: EnvironmentEffect): Unit = {
     blocks = blocks.drop(1)
   }
 
-  override def toString(): String = {
+  override def toString: String = {
     val prefix = "[Tower] id=" + id + ",h=" + height
     if (highestPercentColor().isDefined) {
       prefix + ",colored=" + highestPercentColor().get
@@ -86,6 +86,6 @@ class Tower() {
   }
 
   def consoleOutputString(): String = { 
-    highestPercentColor().getOrElse(Color.RESET).ansiCode + toString
+    highestPercentColor().getOrElse(Color.RESET).ansiCode + toString()
   }
 }

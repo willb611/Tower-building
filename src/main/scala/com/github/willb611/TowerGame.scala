@@ -3,7 +3,7 @@ package com.github.willb611
 object TowerGame {
   def main(args: Array[String]): Unit = {
     println("Hello Tower")
-    var game = new TowerGame
+    val game = new TowerGame
     game.setup()
     game.run()
   }
@@ -13,7 +13,7 @@ class TowerGame {
   val TWO_SECONDS: Int = 2000
   val WORKERS_PER_TOWER: Int = 5
   val TOWERS_TO_MAKE: Int = 5
-  var workers: List[Worker] = List()
+  var builders: List[Builder] = List()
   var towers: List[Tower] = List()
   val clock: GameClock = new GameClock
 
@@ -22,9 +22,9 @@ class TowerGame {
       val tower = new Tower
       towers = tower :: towers
       for (_ <- 0 until WORKERS_PER_TOWER) {
-        val worker = new Worker(tower)
-        workers = worker :: workers
-        clock.withWorker(worker)
+        val builder = new Builder(tower)
+        builders = builder :: builders
+        clock.withBuilder(builder)
       }
       clock.withTower(tower)
     }
@@ -41,7 +41,7 @@ class TowerGame {
   }
 
   def printState(): Unit = {
-    println("Workers: " + workers.length)
+    println("Workers: " + builders.length)
     println("Towers list: " + towers.length)
     for (t <- towers) {
       println(t.consoleOutputString())
