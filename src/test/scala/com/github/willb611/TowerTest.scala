@@ -14,10 +14,10 @@ class TowerTest extends FunSuite {
 
   test("Add coloured block saves latest color") {
     val tower = new Tower().addBlock(green)
-    assert(tower.lastColor.getOrElse(None) == green)
+    assert(tower.lastColor().getOrElse(None) == green)
 
     val newerTower = tower.addBlock(red)
-    assert(newerTower.lastColor.getOrElse(None) == red)
+    assert(newerTower.lastColor().getOrElse(None) == red)
   }
 
   test("Lightning environment affect can damage tower") {
@@ -43,11 +43,11 @@ class TowerTest extends FunSuite {
     tower.addBlock(red)
     tower.addBlock(red)
     tower.addBlock(green)
-    assert(tower.highestPercentColor.getOrElse(green) == red)
+    assert(tower.highestPercentColor().getOrElse(green) == red)
   }
   test("highestPercentColor on empty tower shouldn't fail"
     + " in the tower") {
     val tower = new Tower
-    assert(tower.highestPercentColor == None)
+    assert(tower.highestPercentColor().isEmpty)
   }
 }

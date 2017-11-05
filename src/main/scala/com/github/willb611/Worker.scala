@@ -3,10 +3,10 @@ package com.github.willb611
 import com.github.willb611.EnvironmentEffects.EnvironmentEffect
 
 object Worker {
-  private var instancesMadeSoFar: Int = 0;
+  private var instancesMadeSoFar: Int = 0
 
   def nextColor(): Color = {
-    return new Color
+    new Color
   }
   def nextId(): Int = {
     var cpy = instancesMadeSoFar
@@ -21,7 +21,7 @@ class Worker(val tower: Tower, val colorToUseForBlocks: Color) {
 
   var activeEffects: List[EnvironmentEffect] = List()
 
-  def doWork(time: Int) = {
+  def doWork(time: Int): Unit = {
     if (activeEffects.isEmpty) {
       buildForTime(time)
     } else {
@@ -32,7 +32,7 @@ class Worker(val tower: Tower, val colorToUseForBlocks: Color) {
   }
 
   def buildForTime(time: Int) {
-    for (workDone <- 0 until time) {
+    for (_ <- 0 until time) {
       tower.addBlock(colorToUseForBlocks)
     }
   }

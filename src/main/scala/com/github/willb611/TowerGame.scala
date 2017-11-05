@@ -10,7 +10,7 @@ object TowerGame {
 }
 
 class TowerGame {
-  val TWO_SECONDS: Int = 2000;
+  val TWO_SECONDS: Int = 2000
   val WORKERS_PER_TOWER: Int = 5
   val TOWERS_TO_MAKE: Int = 5
   var workers: List[Worker] = List()
@@ -18,11 +18,11 @@ class TowerGame {
   val clock: GameClock = new GameClock
 
   def setup(): Unit = {
-    for (towersCreated <- 0 until TOWERS_TO_MAKE) {
-      var tower = new Tower
+    for (_ <- 0 until TOWERS_TO_MAKE) {
+      val tower = new Tower
       towers = tower :: towers
-      for (workersCreated <- 0 until WORKERS_PER_TOWER) {
-        var worker = new Worker(tower)
+      for (_ <- 0 until WORKERS_PER_TOWER) {
+        val worker = new Worker(tower)
         workers = worker :: workers
         clock.withWorker(worker)
       }
@@ -32,7 +32,7 @@ class TowerGame {
 
   def run(): Unit = {
     printState()
-    for (cnt <- 0 until 2) {
+    for (_ <- 0 until 2) {
       println("[TowerGame] Sleeping..")
       Thread.sleep(TWO_SECONDS)
       clock.runForTime(1)
@@ -44,7 +44,7 @@ class TowerGame {
     println("Workers: " + workers.length)
     println("Towers list: " + towers.length)
     for (t <- towers) {
-      println(t.consoleOutputString)
+      println(t.consoleOutputString())
     }
     print(Console.RESET)
   }

@@ -2,15 +2,14 @@ package com.github.willb611
 
 import com.github.willb611.EnvironmentEffects.EnvironmentEffect
 import scala.collection.immutable.HashMap
-import scala.collection.immutable.TreeMap
 import scala.collection.immutable.SortedSet
 
 object Tower {
   val DEFAULT_COLOR: Color = new Color("FFFFFF")
 
-  private var instancesMadeSoFar: Int = 0;
+  private var instancesMadeSoFar: Int = 0
   def nextId(): Int = {
-    var cpy = instancesMadeSoFar
+    val cpy = instancesMadeSoFar
     instancesMadeSoFar += 1
     cpy
   }
@@ -53,13 +52,13 @@ class Tower() {
   }
 
   private def swapColorCountMap(colorCountMap: Map[Color, Int]): Map[Int, Color] = {
-    (HashMap() ++ colorCountMap.map(_.swap))
+    HashMap() ++ colorCountMap.map(_.swap)
   }
 
   private def highestPercentColorFromMap(colorCountMap: Map[Color, Int]): Option[Color] = {
-    var highestCounts = swapColorCountMap(colorCountMap)
+    val highestCounts = swapColorCountMap(colorCountMap)
     var sortedByCount: SortedSet[Int] = SortedSet()
-    sortedByCount = (sortedByCount ++ highestCounts.keySet)
+    sortedByCount = sortedByCount ++ highestCounts.keySet
 
     val key = sortedByCount.lastKey
     highestCounts.get(key)
@@ -79,14 +78,14 @@ class Tower() {
 
   override def toString(): String = {
     val prefix = "[Tower] id=" + id + ",h=" + height
-    if (highestPercentColor != None) {
-      prefix + ",colored=" + highestPercentColor.get
+    if (highestPercentColor().isDefined) {
+      prefix + ",colored=" + highestPercentColor().get
     } else {
       prefix
     }
   }
 
   def consoleOutputString(): String = { 
-    highestPercentColor.getOrElse(Color.RESET).ansiCode + toString
+    highestPercentColor().getOrElse(Color.RESET).ansiCode + toString
   }
 }

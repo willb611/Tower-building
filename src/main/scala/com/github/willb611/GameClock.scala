@@ -3,7 +3,7 @@ package com.github.willb611
 class GameClock() {
   var workers: List[Worker] = List()
   var towers: List[Tower] = List()
-  var environment = Environment.Default;
+  var environment: Environment = Environment.Default
 
   def withWorker(worker: Worker): Unit = {
     workers = worker :: workers
@@ -14,7 +14,7 @@ class GameClock() {
   }
 
   def withEnvironment(env: Environment): Unit = {
-    environment = env;
+    environment = env
   }
 
   def runForTime(time: Int): Unit = {

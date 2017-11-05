@@ -1,6 +1,5 @@
 package com.github.willb611
 
-import com.github.willb611.EnvironmentEffects.EnvironmentEffect
 import org.scalatest.FunSuite
 
 class WorkerTest extends FunSuite {
@@ -21,7 +20,7 @@ class WorkerTest extends FunSuite {
     val worker = new Worker(tower, color)
     val time = 1
     worker.doWork(time)
-    assert(tower.lastColor.getOrElse("FAIL") == color)
+    assert(tower.lastColor().getOrElse("FAIL") == color)
   }
 
   test("Many workers means more work") {
