@@ -15,7 +15,7 @@ class Environment(val random: Random) extends LazyLogging {
     val applyEffect = random.nextBoolean()
     if (applyEffect) {
       val effect = EnvironmentEffects.Lightning
-      logger.debug(s"$builder, will be affected by $effect")
+      logger.debug(s"About to apply affect $effect to $builder")
       builder.environmentEffect(effect)
     }
     applyEffect
@@ -25,7 +25,7 @@ class Environment(val random: Random) extends LazyLogging {
     val applyEffect = random.nextBoolean()
     if (applyEffect) {
       val effect = EnvironmentEffects.Lightning
-      logger.debug(s"$tower, will be affected by $effect")
+      logger.debug(s"About to apply affect $effect to $tower")
       tower.environmentEffect(effect)
     }
     applyEffect
