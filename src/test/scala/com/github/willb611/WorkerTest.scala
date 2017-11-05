@@ -14,6 +14,15 @@ class WorkerTest extends FunSuite {
     assert(tower.height >= 2)
   }
 
+  test("Worker adds blocks of the correct color") {
+    val tower = new Tower
+    val color = new Color("TEST")
+    val worker = new Worker(tower, color)
+    val time = 1
+    worker.doWork(time)
+    assert(tower.lastColor.getOrElse("FAIL") == color)
+  }
+
   test("Many workers means more work") {
     val tower = new Tower
     val w1 = new Worker(tower)

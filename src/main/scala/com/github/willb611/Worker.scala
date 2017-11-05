@@ -1,9 +1,17 @@
 package com.github.willb611
 
-class Worker(val tower: Tower) {
+object Worker {
+  def nextColor(): Color = {
+    return new Color
+  }
+}
+
+class Worker(val tower: Tower, val colorToUseForBlocks: Color) {
+  def this(tower: Tower) = this(tower, Worker.nextColor())
+
   def doWork(time: Int) = {
     for (workDone <- 0 until time) {
-      tower.addBlock("blah")
+      tower.addBlock(colorToUseForBlocks)
     }
   }
 }

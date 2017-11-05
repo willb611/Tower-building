@@ -3,8 +3,8 @@ package com.github.willb611
 import org.scalatest.FunSuite
 
 class TowerTest extends FunSuite {
-  val greenColor = "green"
-  val redColor = "red"
+  val greenColor = Color.GREEN
+  val redColor = Color.RED
 
   test("Add block gives tower height") {
     val tower = new Tower

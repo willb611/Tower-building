@@ -3,7 +3,7 @@ package com.github.willb611
 import com.github.willb611.EnvironmentEffects.EnvironmentEffect
 
 object Tower {
-  val defaultColor = "FFFFFF"
+  val DEFAULT_COLOR: Color = new Color("FFFFFF")
 
   private var instancesMadeSoFar: Int = 0;
   def nextId(): Int = {
@@ -15,10 +15,10 @@ object Tower {
 
 class Tower() {
   val id = Tower.nextId()
-  var blocks: List[String] = List()
+  var blocks: List[Color] = List()
 
   def height(): Int = blocks.length
-  def lastColor(): Option[String] = {
+  def lastColor(): Option[Color] = {
     if (blocks.length > 0) {
       Some(blocks.head)
     } else {
@@ -26,12 +26,12 @@ class Tower() {
     }
   }
 
-  def addBlock(str: String): Tower = {
+  def addBlock(str: Color): Tower = {
     blocks = List(str) ++ blocks
     this
   }
   def addBlock(): Tower = {
-    addBlock(Tower.defaultColor)
+    addBlock(Tower.DEFAULT_COLOR)
   }
 
   def environmentEffect(effect: EnvironmentEffect) = {
