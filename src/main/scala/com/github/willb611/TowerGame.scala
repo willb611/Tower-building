@@ -21,7 +21,7 @@ class TowerGame extends LazyLogging {
 
   def setup(): Unit = {
     for (_ <- 0 until TOWERS_TO_MAKE) {
-      val tower = new Tower
+      val tower = new ProxyTower
       towers = tower :: towers
       for (_ <- 0 until WORKERS_PER_TOWER) {
         val builder = new Builder(tower)

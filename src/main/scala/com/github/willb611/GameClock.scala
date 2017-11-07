@@ -2,14 +2,14 @@ package com.github.willb611
 
 class GameClock() {
   var builders: List[Builder] = List()
-  var towers: List[Tower] = List()
+  var towers: List[ProxyTower] = List()
   var environment: Environment = Environment.Default
 
   def withBuilder(builder: Builder): Unit = {
     builders = builder :: builders
   }
 
-  def withTower(tower: Tower): Unit = {
+  def withTower(tower: ProxyTower): Unit = {
     towers = tower :: towers
   }
 
@@ -24,6 +24,7 @@ class GameClock() {
     }
     for (tower <- towers) {
       environment.applyAnyEffects(tower)
+      tower.processPendingBlocks()
     }
   }
 }

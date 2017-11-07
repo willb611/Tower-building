@@ -14,7 +14,7 @@ class GameClockTest extends FunSuite with MockFactory {
   }
 
   test("Timer uses environment to apply effects") {
-    val tower = new Tower
+    val tower = new ProxyTower
     val builder = new Builder(tower)
     val gameClock = new GameClock
     gameClock.withBuilder(builder)
@@ -29,12 +29,13 @@ class GameClockTest extends FunSuite with MockFactory {
   }
 
   test("Only 1 builder can place blocks at a time") {
-    val tower = new Tower
+    val tower = new ProxyTower
     val b1 = new Builder(tower)
     val b2 = new Builder(tower)
     val gameClock = new GameClock
     gameClock.withBuilder(b1)
     gameClock.withBuilder(b2)
+    gameClock.withTower(tower)
     gameClock.runForTime(1)
     assert(tower.height == 1)
   }

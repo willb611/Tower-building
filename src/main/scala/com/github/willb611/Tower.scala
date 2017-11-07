@@ -30,17 +30,20 @@ class Tower() {
   }
 
   def highestPercentColor(): Option[Color] = {
-    if (height > 0) {
-      var colorCountMap: Map[Color, Int] = buildColorCountMap()
+    highestPercentColorFromBlockList(blocks)
+  }
+  protected def highestPercentColorFromBlockList(colorBlocks: List[Color]): Option[Color] = {
+    if (colorBlocks.nonEmpty) {
+      val colorCountMap: Map[Color, Int] = buildColorCountMap(colorBlocks)
       highestPercentColorFromMap(colorCountMap)
     } else {
       None
     }
   }
 
-  private def buildColorCountMap(): Map[Color, Int] = {
+  private def buildColorCountMap(colorBlocks: List[Color]): Map[Color, Int] = {
     var colorCountMap: Map[Color, Int] = HashMap()
-    for (coloredBlock <- blocks) {
+    for (coloredBlock <- colorBlocks) {
       if (colorCountMap.contains(coloredBlock)) {
         colorCountMap += (coloredBlock -> (colorCountMap.getOrElse(coloredBlock, 0) + 1))
       } else {
