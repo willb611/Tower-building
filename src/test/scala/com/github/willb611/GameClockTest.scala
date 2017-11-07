@@ -27,4 +27,15 @@ class GameClockTest extends FunSuite with MockFactory {
     // run
     gameClock.runForTime(1)
   }
+
+  test("Only 1 builder can place blocks at a time") {
+    val tower = new Tower
+    val b1 = new Builder(tower)
+    val b2 = new Builder(tower)
+    val gameClock = new GameClock
+    gameClock.withBuilder(b1)
+    gameClock.withBuilder(b2)
+    gameClock.runForTime(1)
+    assert(tower.height == 1)
+  }
 }
