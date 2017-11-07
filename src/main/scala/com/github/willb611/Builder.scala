@@ -1,6 +1,7 @@
 package com.github.willb611
 
 import com.github.willb611.EnvironmentEffects.EnvironmentEffect
+import com.typesafe.scalalogging.LazyLogging
 
 object Builder {
   private var instancesMadeSoFar: Int = 0
@@ -15,7 +16,7 @@ object Builder {
   }
 }
 
-class Builder(val tower: Tower, val colorToUseForBlocks: Color) {
+class Builder(val tower: Tower, val colorToUseForBlocks: Color) extends LazyLogging {
   def this(tower: Tower) = this(tower, Color.randomColor())
   private val id = Builder.nextId()
 
@@ -25,6 +26,7 @@ class Builder(val tower: Tower, val colorToUseForBlocks: Color) {
     if (activeEffects.isEmpty) {
       buildForTime(time)
     } else {
+      logger.debug(s"$this not placing block as affected by $activeEffects")
       if (activeEffects.contains(EnvironmentEffects.Lightning)) {
         activeEffects = activeEffects.dropWhile(_ == EnvironmentEffects.Lightning)
       }
