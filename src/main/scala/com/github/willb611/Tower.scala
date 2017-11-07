@@ -42,8 +42,7 @@ class Tower() {
     var colorCountMap: Map[Color, Int] = HashMap()
     for (coloredBlock <- blocks) {
       if (colorCountMap.contains(coloredBlock)) {
-        colorCountMap = colorCountMap + (coloredBlock
-           -> (colorCountMap.getOrElse(coloredBlock, 0) + 1))
+        colorCountMap += (coloredBlock -> (colorCountMap.getOrElse(coloredBlock, 0) + 1))
       } else {
         colorCountMap = colorCountMap + (coloredBlock -> 1)
       }

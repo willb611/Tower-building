@@ -24,7 +24,6 @@ class GameClockTest extends FunSuite with MockFactory {
     // expects
     (envMock.applyAnyEffects(_: Builder)).expects(builder)
     (envMock.applyAnyEffects(_: Tower)).expects(tower)
-
     // run
     gameClock.runForTime(1)
   }

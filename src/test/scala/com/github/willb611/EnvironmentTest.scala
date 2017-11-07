@@ -5,34 +5,27 @@ import org.scalamock.scalatest.MockFactory
 import org.scalatest.FunSuite
 
 class EnvironmentTest extends FunSuite with MockFactory {
-  ignore("Apply any effect should apply an effect if random is true") {
+  test("Apply any effect should apply an effect if random is true") {
     val randomMock = mock[Random]
     val tower = stub[Tower]
-    val worker = stub[Builder]
     val env = new Environment(randomMock)
-
+    // expect
     (randomMock.nextBoolean _).expects().returns(true)
-
     // run
     env.applyAnyEffects(tower)
-    env.applyAnyEffects(worker)
-
     // verify
     (tower.environmentEffect _).verify(EnvironmentEffects.Lightning)
-    (worker.environmentEffect _).verify(EnvironmentEffects.Lightning)
   }
 
   test("Apply any effect should apply an effect to a builder if random is true") {
     val randomMock = mock[Random]
-    val worker = stub[Builder]
-    var env = new Environment(randomMock)
-
+    val builder = stub[Builder]
+    val env = new Environment(randomMock)
+    // expect
     (randomMock.nextBoolean _).expects().returns(true)
-
     // run
-    env.applyAnyEffects(worker)
-
+    env.applyAnyEffects(builder)
     // verify
-    (worker.environmentEffect _).verify(EnvironmentEffects.Lightning)
+    (builder.environmentEffect _).verify(EnvironmentEffects.Lightning)
   }
 }
