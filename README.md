@@ -11,4 +11,4 @@ Started out as a code kata. See tasks/test below
 6. Tower correctly returns color based on colored blocks already added
 7. Builder timer makes builders do work
 8. Builder timer makes effects happen occasionaly
-9. Builders of the same color take commands from a leader
+9. Team with highest color wins
