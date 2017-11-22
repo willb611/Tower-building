@@ -10,7 +10,7 @@ Started out as a code kata. See tasks/test below
 5. Many builders means more work
 6. Tower correctly returns color based on colored blocks already added
 7. Builder timer makes builders do work
-8. Builder timer makes effects happen occasionaly
+8. Builder timer makes effects happen occasionally
 9. Team with highest color wins
 
 ## Requirements to run 

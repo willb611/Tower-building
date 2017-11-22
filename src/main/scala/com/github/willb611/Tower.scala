@@ -78,6 +78,6 @@ class Tower() {
   }
 
   def consoleOutputString(): String = { 
-    highestPercentColor().getOrElse(Color.RESET).ansiCode + toString()
+    highestPercentColor().getOrElse(Color.RESET).ansiCode + toString() + Color.RESET.ansiCode
   }
 }

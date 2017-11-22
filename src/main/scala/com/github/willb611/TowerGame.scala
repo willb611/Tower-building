@@ -10,6 +10,13 @@ object TowerGame extends LazyLogging {
     val game = new TowerGame
     game.setup()
     game.run()
+    val optionalWinningColor = game.currentlyWinningColor()
+    if (optionalWinningColor.nonEmpty) {
+      val winner = optionalWinningColor.get
+      logger.info("{}[main] Winning color is: {}", winner.ansiCode, winner)
+    } else {
+      logger.info("[main] No winning color!")
+    }
   }
 }
 
@@ -20,7 +27,7 @@ class TowerGame(var builders: List[Builder], var towers: List[ProxyTower]) exten
   val clock: GameClock = new GameClock
 
   def this() = this(List(), List())
-  
+
   {
     updateClockFromBuildersAndTowers()
   }
