@@ -2,7 +2,7 @@
 Started out as a code kata. See tasks/test below
 
 
-#### Tests for the kata
+## Tests for the kata
 1. Add block gives tower height
 2. Add coloured block saves latest color
 3. Builder adds blocks
@@ -12,3 +12,12 @@ Started out as a code kata. See tasks/test below
 7. Builder timer makes builders do work
 8. Builder timer makes effects happen occasionaly
 9. Team with highest color wins
+
+## Requirements to run 
+Need:
+- sbt installed
+
+### Actually running it
+- Enter sbt prompt (i.e. type `sbt` in console)
+- `run` To run it
+- `test` to run tests
