@@ -43,11 +43,12 @@ class BuilderTest extends FunSuite {
   test("When builder has choice of towers, only adds blocks to 1 tower") {
     val t1 = new Tower
     val t2 = new Tower
-    val towers: List[Tower] = List() :: t1 :: t2
+    val towers: List[Tower] = List(t1, t2)
     val builder = new Builder(towers)
     val workDone = 1
     builder.doWork(workDone)
-    val count = towers.reduce(_.height() + _.height())
+    var count = 0
+    towers.foreach(count += _.height)
     assert(count == workDone)
   }
 }

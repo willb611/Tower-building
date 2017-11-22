@@ -16,8 +16,9 @@ object Builder {
   }
 }
 
-class Builder(val tower: Tower, val colorToUseForBlocks: Color) extends LazyLogging {
-  def this(tower: Tower) = this(tower, Color.randomColor())
+class Builder(val towers: List[Tower], val colorToUseForBlocks: Color) extends LazyLogging {
+  def this(towers: List[Tower]) = this(towers, Color.randomColor())
+  def this(tower: Tower) = this(tower :: List())
   private val id = Builder.nextId()
 
   var activeEffects: List[EnvironmentEffect] = List()
@@ -35,7 +36,7 @@ class Builder(val tower: Tower, val colorToUseForBlocks: Color) extends LazyLogg
 
   def buildForTime(time: Int) {
     for (_ <- 0 until time) {
-      tower.addBlock(colorToUseForBlocks)
+      towers.head.addBlock(colorToUseForBlocks)
     }
   }
 
