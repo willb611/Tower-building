@@ -12,6 +12,7 @@ Started out as a code kata. See tasks/test below
 7. Builder timer makes builders do work
 8. Builder timer makes effects happen occasionally
 9. Team with highest color wins
+10. Builders get view of all towers, and choose which to build on.
 
 ## Requirements to run 
 Need:
