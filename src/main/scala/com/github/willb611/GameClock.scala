@@ -6,15 +6,21 @@ class GameClock() {
   var environment: Environment = Environment.Default
 
   def withBuilder(builder: Builder): Unit = {
-    builders = builder :: builders
+    if (builder != null) {
+      builders = builder :: builders
+    }
   }
 
   def withTower(tower: ProxyTower): Unit = {
-    towers = tower :: towers
+    if (tower != null) {
+      towers = tower :: towers
+    }
   }
 
   def withEnvironment(env: Environment): Unit = {
-    environment = env
+    if (env != null) {
+      environment = env
+    }
   }
 
   def runForTime(time: Int): Unit = {

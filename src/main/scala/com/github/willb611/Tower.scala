@@ -35,7 +35,7 @@ class Tower() {
   protected def highestPercentColorFromBlockList(colorBlocks: List[Color]): Option[Color] = {
     if (colorBlocks.nonEmpty) {
       val colorCountMap: Map[Color, Int] = buildColorCountMap(colorBlocks)
-      highestPercentColorFromMap(colorCountMap)
+      ColorCollectionHelper.highestPercentColorFromMap(colorCountMap)
     } else {
       None
     }
@@ -51,19 +51,6 @@ class Tower() {
       }
     }
     colorCountMap
-  }
-
-  private def swapColorCountMap(colorCountMap: Map[Color, Int]): Map[Int, Color] = {
-    HashMap() ++ colorCountMap.map(_.swap)
-  }
-
-  private def highestPercentColorFromMap(colorCountMap: Map[Color, Int]): Option[Color] = {
-    val highestCounts = swapColorCountMap(colorCountMap)
-    var sortedByCount: SortedSet[Int] = SortedSet()
-    sortedByCount = sortedByCount ++ highestCounts.keySet
-
-    val key = sortedByCount.lastKey
-    highestCounts.get(key)
   }
 
   def addBlock(str: Color): Tower = {
