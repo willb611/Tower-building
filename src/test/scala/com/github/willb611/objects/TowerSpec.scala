@@ -1,9 +1,10 @@
 package com.github.willb611.objects
 
 import akka.actor.{ActorRef, ActorSystem, Props}
-import akka.testkit.{ImplicitSender, TestKit}
+import akka.testkit.{ImplicitSender, TestKit, TestProbe}
 import com.github.willb611.Color.{GREEN, RED}
-import com.github.willb611.objects.Environment.ApplyEffectCommand
+import com.github.willb611.humans.Builder
+import com.github.willb611.objects.Environment.{ActorJoinEnvironmentAdvisory, ApplyEffectCommand}
 import com.github.willb611.objects.Tower._
 import com.github.willb611.{Color, ColorCollectionHelper}
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
@@ -57,6 +58,13 @@ class TowerSpec(_system: ActorSystem) extends TestKit(_system)
       expectMsg(waitTime, 3)
       tower ! CountCountQuery
       expectMsg(waitTime, ColorCollectionHelper.CountOfColors(Map(RED -> 2, GREEN -> 1)))
+    }
+    "report builder which placed block to parent given in constructor" in {
+      val testProbe = TestProbe()
+      val builder = system.actorOf(Builder.props(GREEN))
+      val tower = system.actorOf(Tower.props(testProbe.ref))
+      tower.tell(AddBlockRequest(GREEN), builder)
+      testProbe.expectMsg(ActorJoinEnvironmentAdvisory(builder))
     }
   }
 

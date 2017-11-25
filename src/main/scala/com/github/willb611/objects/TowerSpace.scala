@@ -9,6 +9,8 @@ import com.github.willb611.objects.TowerSpace.{CountOfTowersWithColorRequest, To
 import scala.collection.mutable.ListBuffer
 
 object TowerSpace {
+  def props(environment: ActorRef, towersPerSpace: Int): Props = Props(new TowerSpace(environment, towersPerSpace))
+
   case class CountOfTowersWithColorRequest()
   case object TowersInSpaceQuery extends Query
 }
@@ -30,5 +32,7 @@ class TowerSpace(environment: ActorRef, towersToMake: Int) extends Actor with Ac
       sender() ! CountOfColors.EmptyCount
     case TowersInSpaceQuery =>
       sender() ! towers.toList
+    case advisory: ActorJoinEnvironmentAdvisory =>
+      environment forward advisory
   }
 }

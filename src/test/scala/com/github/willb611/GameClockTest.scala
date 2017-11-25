@@ -15,21 +15,6 @@
 //    assert(tower.height >= 1)
 //  }
 //
-//  test("Timer uses environment to apply effects") {
-//    val tower = new ProxyTower
-//    val builder = new Builder(tower)
-//    val gameClock = new GameClock
-//    gameClock.withBuilder(builder)
-//    gameClock.withTower(tower)
-//    var envMock = mock[Environment]
-//    gameClock.withEnvironment(envMock)
-//    // expects
-//    (envMock.applyAnyEffects(_: Builder)).expects(builder)
-//    (envMock.applyAnyEffects(_: Tower)).expects(tower)
-//    // run
-//    gameClock.runForTime(1)
-//  }
-//
 //  test("Only 1 builder can place blocks at a time") {
 //    val tower = new ProxyTower
 //    val b1 = new Builder(tower)

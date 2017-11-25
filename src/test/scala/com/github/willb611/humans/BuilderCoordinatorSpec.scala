@@ -1,11 +1,10 @@
 package com.github.willb611.humans
 
-import akka.actor.{ActorSystem, Props}
-import akka.testkit.{TestKit, TestProbe}
+import akka.actor.ActorSystem
+import akka.testkit.TestKit
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
 
-import scala.concurrent.duration.FiniteDuration
-import scala.concurrent.duration._
+import scala.concurrent.duration.{FiniteDuration, _}
 class BuilderCoordinatorSpec(_system: ActorSystem) extends TestKit(_system)
   with Matchers
   with WordSpecLike
@@ -15,12 +14,10 @@ class BuilderCoordinatorSpec(_system: ActorSystem) extends TestKit(_system)
     TestKit.shutdownActorSystem(system)
   }
   val waitTime: FiniteDuration = 20 milliseconds
-//
-//  "A builderCoordinator" should {
-//    "Instruct builders to work" in {
-//      val probe = TestProbe()
-//      val builder = system.actorOf(Props(classOf[Builder], probe.ref))
-//
-//    }
-//  }
+
+  "A builder coordinator" should {
+    "Tell a builder to do work" in {
+      throw new Exception("TODO")
+    }
+  }
 }

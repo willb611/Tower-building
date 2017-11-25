@@ -2,14 +2,11 @@ package com.github.willb611.humans
 
 import akka.actor.{Actor, ActorLogging, ActorRef, Props}
 import com.github.willb611.Color
-import com.github.willb611.humans.BuilderCoordinator.TowerListRequest
-import com.github.willb611.objects.{Environment, Tower}
 
 import scala.collection.mutable.ListBuffer
 
 object BuilderCoordinator {
-  abstract trait Message
-  final case class TowerListRequest() extends Message
+  def props(buildersToCreate: Int, color: Color): Props = Props(new BuilderCoordinator(buildersToCreate, color))
 }
 
 class BuilderCoordinator(buildersToCreate: Int, color: Color) extends Actor with ActorLogging {
@@ -18,17 +15,13 @@ class BuilderCoordinator(buildersToCreate: Int, color: Color) extends Actor with
 
   override def preStart(): Unit = {
     for (_ <- 0 until buildersToCreate) {
-      val builder = context.actorOf(Props(new Builder(color)))
+      val builder = context.actorOf(Builder.props(color))
       builders += builder
     }
     super.preStart()
   }
 
   override def receive = {
-    case environment: Environment =>
-      log.info("[receive] From {} got {}", sender(), environment)
-      sender() ! TowerListRequest()
-    case tower: Tower =>
-      towers += sender()
+    case msg => unhandled(msg)
   }
 }

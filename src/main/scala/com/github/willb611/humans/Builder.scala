@@ -1,7 +1,6 @@
 package com.github.willb611.humans
 
-import akka.actor.{Actor, ActorLogging, ActorRef}
-import akka.actor.Timers
+import akka.actor.{Actor, ActorLogging, ActorRef, Props, Timers}
 import com.github.willb611.Color
 import com.github.willb611.humans.Builder.{DoWork, TowerToBuild}
 import com.github.willb611.messages.Command
@@ -10,8 +9,8 @@ import com.github.willb611.objects.EnvironmentEffects.EnvironmentEffect
 import com.github.willb611.objects.Environment.ApplyEffectCommand
 import com.github.willb611.objects.Tower.AddBlockRequest
 
-
 object Builder {
+  def props(color: Color): Props = Props(new Builder(color))
   // Messages
   final case class TowerToBuild(towerActor: ActorRef)
   case class DoWork() extends Command

@@ -1,14 +1,15 @@
 package com.github.willb611.objects
 
-import akka.actor.{Actor, ActorLogging}
+import akka.actor.{Actor, ActorLogging, ActorRef, Props}
 import com.github.willb611.ColorCollectionHelper.CountOfColors
 import com.github.willb611.messages.{Command, Query}
-import com.github.willb611.objects.Environment.ApplyEffectCommand
+import com.github.willb611.objects.Environment.{ActorJoinEnvironmentAdvisory, ApplyEffectCommand}
 import com.github.willb611.objects.EnvironmentEffects.EnvironmentEffect
 import com.github.willb611.objects.Tower._
 import com.github.willb611.{Color, ColorCollectionHelper}
 
 object Tower {
+  def props(parent: ActorRef): Props = Props(new Tower(Some(parent)))
   // Messages
   final case class AddBlockRequest(colorToUseForBlocks: Color)
   final case object ProcessPendingBlocks extends Command
@@ -18,12 +19,22 @@ object Tower {
   final case object LastColorQuery extends Query
 }
 
-class Tower() extends Actor with ActorLogging {
+class Tower(parent: Option[ActorRef]) extends Actor with ActorLogging {
+  def this() = this(None)
   private var blocks: List[Color] = List()
   private var pendingBlocks: List[Color] = List()
 
+  private def parentActor(): ActorRef = {
+    if (parent.isDefined) {
+      parent.get
+    } else {
+      context.parent
+    }
+  }
+
   override def receive = {
     case message: AddBlockRequest =>
+      parentActor() ! ActorJoinEnvironmentAdvisory(sender())
       pendingBlocks = message.colorToUseForBlocks :: pendingBlocks
     // commands
     case message: ApplyEffectCommand =>

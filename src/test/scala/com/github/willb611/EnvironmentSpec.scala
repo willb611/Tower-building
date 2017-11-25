@@ -27,7 +27,7 @@ class EnvironmentSpec(_system: ActorSystem) extends TestKit(_system)
       val randomMock = mock[Random]
       (randomMock.nextBoolean _).expects().returning(true).atLeastOnce()
       val testProbe = TestProbe()
-      val environment = system.actorOf(Props(new Environment(randomMock, effectInterval)))
+      val environment = system.actorOf(Environment.props(randomMock, effectInterval))
       environment ! ActorJoinEnvironmentAdvisory(testProbe.ref)
       testProbe.expectMsg(waitTime, ApplyEffectCommand(EnvironmentEffects.Lightning))
     }
@@ -35,7 +35,7 @@ class EnvironmentSpec(_system: ActorSystem) extends TestKit(_system)
       val randomMock = mock[Random]
       (randomMock.nextBoolean _).expects().returning(true).atLeastOnce()
       val testProbe = TestProbe()
-      val environment = system.actorOf(Props(new Environment(randomMock, effectInterval)))
+      val environment = system.actorOf(Environment.props(randomMock, effectInterval))
       environment ! ActorJoinEnvironmentAdvisory(testProbe.ref)
       environment ! ApplyEffectsToActors
       testProbe.expectMsg(waitTime, ApplyEffectCommand(EnvironmentEffects.Lightning))

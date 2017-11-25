@@ -1,6 +1,6 @@
 package com.github.willb611.objects
 
-import akka.actor.{Actor, ActorLogging, ActorRef, Timers}
+import akka.actor.{Actor, ActorLogging, ActorRef, Props, Timers}
 import com.github.willb611.messages.Command
 import com.github.willb611.objects.Environment.{ActorJoinEnvironmentAdvisory, ApplyEffectCommand, ApplyEffectsToActors, EnvironmentEffectTimerKey}
 import com.github.willb611.objects.EnvironmentEffects.EnvironmentEffect
@@ -9,6 +9,8 @@ import scala.concurrent.duration.{FiniteDuration, _}
 import scala.util.Random
 
 object Environment {
+  def props(random: Random, effectInterval: FiniteDuration): Props = Props(new Environment(random, effectInterval))
+
   val DefaultEffectInterval: FiniteDuration = 100 milliseconds
   private object EnvironmentEffectTimerKey
   // Messages

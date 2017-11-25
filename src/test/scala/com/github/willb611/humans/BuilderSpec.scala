@@ -1,6 +1,6 @@
 package com.github.willb611.humans
 
-import akka.actor.{ActorSystem, Props}
+import akka.actor.ActorSystem
 import akka.testkit.{TestKit, TestProbe}
 import com.github.willb611.Color
 import com.github.willb611.humans.Builder.{DoWork, TowerToBuild}
@@ -25,7 +25,7 @@ class BuilderSpec(_system: ActorSystem) extends TestKit(_system)
     "adds blocks of the right color" in {
       val color = new Color("TEST")
       val testProbe = TestProbe()
-      val builder = system.actorOf(Props(new Builder(color)))
+      val builder = system.actorOf(Builder.props(color))
       builder ! TowerToBuild(testProbe.ref)
       builder ! DoWork
       testProbe.expectMsg(waitTime, Tower.AddBlockRequest(color))
@@ -35,7 +35,7 @@ class BuilderSpec(_system: ActorSystem) extends TestKit(_system)
 
     "do nothing after being hit by lightning" in {
       val testProbe = TestProbe()
-      val builder = system.actorOf(Props(new Builder(Color.randomColor())))
+      val builder = system.actorOf(Builder.props(Color.randomColor()))
       builder ! TowerToBuild(testProbe.ref)
       builder ! ApplyEffectCommand(EnvironmentEffects.Lightning)
       builder ! DoWork
@@ -48,7 +48,7 @@ class BuilderSpec(_system: ActorSystem) extends TestKit(_system)
       val testColor = Color.BLUE
       val ignoredTestProbe = TestProbe()
       val testProbe = TestProbe()
-      val builder = system.actorOf(Props(new Builder(testColor)))
+      val builder = system.actorOf(Builder.props(testColor))
       builder ! TowerToBuild(ignoredTestProbe.ref)
       builder ! TowerToBuild(testProbe.ref)
       builder ! DoWork

@@ -32,10 +32,10 @@ class GameHost(gameConfig: GameConfig) extends Actor with ActorLogging {
       }
       val c = Color.randomColor(colors)
       colors = colors.filter(filtered => filtered != c)
-      coordinators += context.actorOf(Props(new BuilderCoordinator(gameConfig.buildersPerCoordinator, c)))
+      coordinators += context.actorOf(BuilderCoordinator.props(gameConfig.buildersPerCoordinator, c))
     }
     for (_ <- 0 until gameConfig.spacesForTowers) {
-      towerSpaces += context.actorOf(Props(new TowerSpace(environment, gameConfig.towersPerSpace)), "towerSpace")
+      towerSpaces += context.actorOf(TowerSpace.props(environment, gameConfig.towersPerSpace), "towerSpace")
     }
     super.preStart()
     log.debug("[preStart] complete!")
