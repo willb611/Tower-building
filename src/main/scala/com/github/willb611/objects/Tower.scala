@@ -1,6 +1,6 @@
 package com.github.willb611.objects
 
-import akka.actor.{Actor, ActorLogging, ActorRef, Props}
+import akka.actor.{Actor, ActorLogging, ActorRef, Props, Timers}
 import com.github.willb611.ColorCollectionHelper.CountOfColors
 import com.github.willb611.messages.{Command, Query}
 import com.github.willb611.objects.Environment.{ActorJoinEnvironmentAdvisory, ApplyEffectCommand}
@@ -8,22 +8,34 @@ import com.github.willb611.objects.EnvironmentEffects.EnvironmentEffect
 import com.github.willb611.objects.Tower._
 import com.github.willb611.{Color, ColorCollectionHelper}
 
+import scala.concurrent.duration.{FiniteDuration, _}
+
 object Tower {
   def props(parent: ActorRef): Props = Props(new Tower(Some(parent)))
   val ActorNamePrefix: String = "tower"
+  val processBlocksInterval: FiniteDuration = 100 millis
+  private final case object TimerKey
   // Messages
   final case class AddBlockRequest(colorToUseForBlocks: Color)
-  final case object ProcessPendingBlocks extends Command
+  final case object ProcessPendingBlocksCommand extends Command
 
   final case object CountCountQuery extends Query
   final case object HeightQuery extends Query
   final case object LastColorQuery extends Query
 }
 
-class Tower(parent: Option[ActorRef]) extends Actor with ActorLogging {
+class Tower(parent: Option[ActorRef])
+  extends Actor
+    with ActorLogging
+    with Timers {
   def this() = this(None)
   private var blocks: List[Color] = List()
   private var pendingBlocks: List[Color] = List()
+
+  override def preStart(): Unit = {
+    timers.startPeriodicTimer(TimerKey, ProcessPendingBlocksCommand, processBlocksInterval)
+    super.preStart()
+  }
 
   private def parentActor(): ActorRef = {
     if (parent.isDefined) {
@@ -40,9 +52,8 @@ class Tower(parent: Option[ActorRef]) extends Actor with ActorLogging {
     // commands
     case message: ApplyEffectCommand =>
       environmentEffect(message.environmentEffect)
-    case ProcessPendingBlocks =>
+    case ProcessPendingBlocksCommand =>
       processPendingBlocks()
-      log.debug(s"[receive] Processed blocks, state is now: $toString")
     // queries
     case CountCountQuery =>
       sender() ! colorCount()
@@ -58,12 +69,17 @@ class Tower(parent: Option[ActorRef]) extends Actor with ActorLogging {
   }
 
   def processPendingBlocks(): Unit = {
+    val startHeight = height()
     val colorToPlace = ColorCollectionHelper.colorCountFromList(pendingBlocks).highestPercentColor()
     if (colorToPlace.nonEmpty) {
       pendingBlocks = List()
       blocks = colorToPlace.get :: blocks
     }
-    log.debug(s"[processPendingBlocks] Finished, height now ${height()}")
+    if (startHeight != height()) {
+      log.debug(s"[processPendingBlocks] Processed blocks, state is now: $toString")
+    } else {
+      log.debug(s"[processPendingBlocks] Finished, no change")
+    }
   }
 
   def height(): Int = blocks.length

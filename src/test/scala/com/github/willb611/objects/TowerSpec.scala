@@ -4,7 +4,7 @@ import akka.actor.{ActorRef, ActorSystem, Props}
 import akka.testkit.{ImplicitSender, TestKit, TestProbe}
 import com.github.willb611.Color.{GREEN, RED}
 import com.github.willb611.builders.Builder
-import com.github.willb611.builders.Builder.TowerToBuild
+import com.github.willb611.builders.Builder.{DoWork, TowerToBuild}
 import com.github.willb611.objects.Environment.{ActorJoinEnvironmentAdvisory, ApplyEffectCommand}
 import com.github.willb611.objects.Tower._
 import com.github.willb611.{Color, ColorCollectionHelper}
@@ -27,7 +27,7 @@ class TowerSpec(_system: ActorSystem) extends TestKit(_system)
     "increase in height after receiving processPendingBlocks message" in {
       val tower = system.actorOf(Props[Tower])
       addBlockToTower(Color.randomColor(), tower)
-      tower ! ProcessPendingBlocks
+      tower ! ProcessPendingBlocksCommand
       tower ! HeightQuery
       expectMsg(waitTime, 1)
     }
@@ -90,17 +90,35 @@ class TowerSpec(_system: ActorSystem) extends TestKit(_system)
 
 
   "A tower given multiple blocks" should {
-    "Not add any until it's told to" in {
-      val probe = TestProbe()
+    "Not add any until it's told to, then only add 1" in {
+      val tower = system.actorOf(Props[Tower])
       val b1 = system.actorOf(Builder.props(Color.GREEN))
-      b1 ! TowerToBuild(probe.ref)
+      b1 ! TowerToBuild(tower)
+      b1 ! DoWork
       val b2 = system.actorOf(Builder.props(Color.GREEN))
-      b2 ! TowerToBuild(probe.ref)
+      b2 ! TowerToBuild(tower)
+      b2 ! DoWork
+      Thread.sleep(100)
+      tower ! HeightQuery
+      expectMsg(waitTime, 0)
+      tower ! ProcessPendingBlocksCommand
+      tower ! HeightQuery
+      expectMsg(waitTime, 1)
+    }
+    "Add blocks over time according to some timer" in {
+      val tower = system.actorOf(Props[Tower])
+      tower ! HeightQuery
+      expectMsg(waitTime, 0)
+      tower ! AddBlockRequest(Color.GREEN)
+      tower ! AddBlockRequest(Color.GREEN)
+      Thread.sleep(500)
+      tower ! HeightQuery
+      expectMsg(waitTime, 1)
     }
   }
 
   private def addBlockToTower(color: Color, tower: ActorRef) {
     tower ! AddBlockRequest(color)
-    tower ! ProcessPendingBlocks
+    tower ! ProcessPendingBlocksCommand
   }
 }

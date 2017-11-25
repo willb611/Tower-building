@@ -26,8 +26,9 @@ class Environment(val random: Random, val effectInterval: FiniteDuration)
   def this() = this(new Random, Environment.DefaultEffectInterval)
   var actorsToEffect: Set[ActorRef] = Set()
 
-  {
+  override def preStart(): Unit = {
     timers.startPeriodicTimer(EnvironmentEffectTimerKey, ApplyEffectsToActors, effectInterval)
+    super.preStart()
   }
 
   def applyAnyEffects(): Unit = {
