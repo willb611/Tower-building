@@ -3,7 +3,7 @@ package com.github.willb611.objects
 import akka.actor.{ActorRef, ActorSystem}
 import akka.testkit.{ImplicitSender, TestKit, TestProbe}
 import com.github.willb611.Color
-import com.github.willb611.humans.Builder
+import com.github.willb611.builders.Builder
 import com.github.willb611.objects.Environment.ActorJoinEnvironmentAdvisory
 import com.github.willb611.objects.TowerSpace.TowersInSpaceQuery
 import org.scalamock.scalatest.MockFactory
@@ -17,7 +17,7 @@ class TowerSpaceSpec(_system: ActorSystem) extends TestKit(_system)
   with ImplicitSender
   with BeforeAndAfterAll
   with MockFactory {
-  def this() = this(ActorSystem("EnvironmentSpec"))
+  def this() = this(ActorSystem("TowerSpaceSpec"))
   override def afterAll: Unit = {
     TestKit.shutdownActorSystem(system)
   }

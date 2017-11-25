@@ -10,6 +10,7 @@ import com.github.willb611.{Color, ColorCollectionHelper}
 
 object Tower {
   def props(parent: ActorRef): Props = Props(new Tower(Some(parent)))
+  val ActorNamePrefix: String = "tower"
   // Messages
   final case class AddBlockRequest(colorToUseForBlocks: Color)
   final case object ProcessPendingBlocks extends Command

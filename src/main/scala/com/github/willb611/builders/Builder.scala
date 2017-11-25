@@ -1,9 +1,9 @@
-package com.github.willb611.humans
+package com.github.willb611.builders
 
 import akka.actor.{Actor, ActorLogging, ActorRef, Props, Timers}
 import com.github.willb611.Color
-import com.github.willb611.humans.Builder.{DoWork, TowerToBuild}
-import com.github.willb611.messages.Command
+import com.github.willb611.builders.Builder.{DoWork, TowerBeingBuiltQuery, TowerToBuild}
+import com.github.willb611.messages.{Command, Query}
 import com.github.willb611.objects.EnvironmentEffects
 import com.github.willb611.objects.EnvironmentEffects.EnvironmentEffect
 import com.github.willb611.objects.Environment.ApplyEffectCommand
@@ -11,9 +11,11 @@ import com.github.willb611.objects.Tower.AddBlockRequest
 
 object Builder {
   def props(color: Color): Props = Props(new Builder(color))
+  val ActorNamePrefix: String = "builder"
   // Messages
   final case class TowerToBuild(towerActor: ActorRef)
   case class DoWork() extends Command
+  object TowerBeingBuiltQuery extends Query
 }
 
 class Builder(val colorToUseForBlocks: Color) extends Actor
@@ -51,11 +53,16 @@ class Builder(val colorToUseForBlocks: Color) extends Actor
 
   override def receive = {
     case msg: TowerToBuild =>
+      log.debug(s"[receive] Given tower: $msg")
       tower = Option(msg.towerActor)
     case DoWork =>
       doWork(1)
     case effect: ApplyEffectCommand =>
       environmentEffect(effect.environmentEffect)
+    // queries
+    case TowerBeingBuiltQuery =>
+      log.debug(s"[receive] Responding to $TowerBeingBuiltQuery with $tower")
+      sender() ! tower
   }
 
   override def unhandled(message: Any): Unit = {

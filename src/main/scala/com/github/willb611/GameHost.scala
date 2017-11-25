@@ -7,7 +7,7 @@ import akka.pattern.ask
 import akka.util.Timeout
 import com.github.willb611.ColorCollectionHelper.CountOfColors
 import com.github.willb611.GameHost.WinningColorQuery
-import com.github.willb611.humans.BuilderCoordinator
+import com.github.willb611.builders.BuilderCoordinator
 import com.github.willb611.messages.Query
 import com.github.willb611.objects.{Environment, TowerSpace}
 
@@ -20,8 +20,12 @@ object GameHost {
 
 class GameHost(gameConfig: GameConfig) extends Actor with ActorLogging {
   private val environment: ActorRef = context.actorOf(Props[Environment])
+
   private val coordinators: ListBuffer[ActorRef] = ListBuffer()
+  private val coordinatorNameIter = Iterator from 1 map (i => s"${BuilderCoordinator.ActorNamePrefix}-$i")
+
   private val towerSpaces: ListBuffer[ActorRef] = ListBuffer()
+  private val towerSpaceNameIter = Iterator from 1 map (i => s"${TowerSpace.ActorNamePrefix}-$i")
 
   override def preStart(): Unit = {
     log.info("[preStart] Entered method.")
@@ -32,10 +36,10 @@ class GameHost(gameConfig: GameConfig) extends Actor with ActorLogging {
       }
       val c = Color.randomColor(colors)
       colors = colors.filter(filtered => filtered != c)
-      coordinators += context.actorOf(BuilderCoordinator.props(gameConfig.buildersPerCoordinator, c))
+      coordinators += context.actorOf(BuilderCoordinator.props(gameConfig.buildersPerCoordinator, c), coordinatorNameIter.next())
     }
     for (_ <- 0 until gameConfig.spacesForTowers) {
-      towerSpaces += context.actorOf(TowerSpace.props(environment, gameConfig.towersPerSpace), "towerSpace")
+      towerSpaces += context.actorOf(TowerSpace.props(environment, gameConfig.towersPerSpace), towerSpaceNameIter.next())
     }
     super.preStart()
     log.debug("[preStart] complete!")

@@ -2,8 +2,6 @@ package com.github.willb611
 
 import com.typesafe.scalalogging.LazyLogging
 
-import scala.util.Random
-
 object Color extends LazyLogging {
   val GREEN: Color = new Color("GREEN", Console.GREEN)
   val RED: Color = new Color("RED", Console.RED)
@@ -15,15 +13,13 @@ object Color extends LazyLogging {
 
   val ansiColors: List[Color] = List(RED, GREEN, YELLOW,
       BLUE, MAGENTA, CYAN)
-  val randomGenerator: Random = new Random
 
   def randomColor(): Color = {
     randomColor(ansiColors)
   }
   def randomColor(colors: List[Color]): Color = {
     try {
-      val index: Int = randomGenerator.nextInt(colors.length)
-      colors(index)
+      RandomHelper.randomFrom(colors).get
     } catch {
       case e: Exception =>
         logger.error("[randomColor] Error! {}", e)

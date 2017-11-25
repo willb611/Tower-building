@@ -9,6 +9,8 @@ import com.github.willb611.objects.TowerSpace.{CountOfTowersWithColorRequest, To
 import scala.collection.mutable.ListBuffer
 
 object TowerSpace {
+  val ActorNamePrefix: String = "towerSpace"
+
   def props(environment: ActorRef, towersPerSpace: Int): Props = Props(new TowerSpace(environment, towersPerSpace))
 
   case class CountOfTowersWithColorRequest()
@@ -17,10 +19,11 @@ object TowerSpace {
 
 class TowerSpace(environment: ActorRef, towersToMake: Int) extends Actor with ActorLogging {
   private val towers = ListBuffer[ActorRef]()
+  private val towerNameIterator = Iterator from 1 map (i => s"${Tower.ActorNamePrefix}-$i")
 
   override def preStart(): Unit = {
     for (_ <- 0 until towersToMake) {
-      val t = context.actorOf(Props[Tower])
+      val t = context.actorOf(Props[Tower], towerNameIterator.next())
       environment ! ActorJoinEnvironmentAdvisory(t)
       towers += t
     }

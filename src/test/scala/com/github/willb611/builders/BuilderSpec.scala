@@ -1,9 +1,9 @@
-package com.github.willb611.humans
+package com.github.willb611.builders
 
 import akka.actor.ActorSystem
 import akka.testkit.{TestKit, TestProbe}
 import com.github.willb611.Color
-import com.github.willb611.humans.Builder.{DoWork, TowerToBuild}
+import com.github.willb611.builders.Builder.{DoWork, TowerToBuild}
 import com.github.willb611.objects.Environment.ApplyEffectCommand
 import com.github.willb611.objects.{EnvironmentEffects, Tower}
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
