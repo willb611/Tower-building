@@ -3,12 +3,13 @@ package com.github.willb611.objects
 import akka.actor.{Actor, ActorLogging}
 import com.github.willb611.ColorCollectionHelper.CountOfColors
 import com.github.willb611.messages.{Command, Query}
-import com.github.willb611.objects.Environment.ApplyEffect
+import com.github.willb611.objects.Environment.ApplyEffectCommand
 import com.github.willb611.objects.EnvironmentEffects.EnvironmentEffect
 import com.github.willb611.objects.Tower._
 import com.github.willb611.{Color, ColorCollectionHelper}
 
 object Tower {
+  // Messages
   final case class AddBlockRequest(colorToUseForBlocks: Color)
   final case object ProcessPendingBlocks extends Command
 
@@ -25,7 +26,7 @@ class Tower() extends Actor with ActorLogging {
     case message: AddBlockRequest =>
       pendingBlocks = message.colorToUseForBlocks :: pendingBlocks
     // commands
-    case message: ApplyEffect =>
+    case message: ApplyEffectCommand =>
       environmentEffect(message.environmentEffect)
     case ProcessPendingBlocks =>
       processPendingBlocks()

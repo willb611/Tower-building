@@ -1,11 +1,11 @@
-package com.github.willb611
+package com.github.willb611.objects
 
 import akka.actor.{ActorRef, ActorSystem, Props}
 import akka.testkit.{ImplicitSender, TestKit}
 import com.github.willb611.Color.{GREEN, RED}
-import com.github.willb611.objects.Environment.ApplyEffect
+import com.github.willb611.objects.Environment.ApplyEffectCommand
 import com.github.willb611.objects.Tower._
-import com.github.willb611.objects.{EnvironmentEffects, Tower}
+import com.github.willb611.{Color, ColorCollectionHelper}
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
 
 import scala.concurrent.duration.{FiniteDuration, _}
@@ -19,7 +19,7 @@ class TowerSpec(_system: ActorSystem) extends TestKit(_system)
   override def afterAll: Unit = {
     TestKit.shutdownActorSystem(system)
   }
-  val waitTime: FiniteDuration = 200 milliseconds
+  val waitTime: FiniteDuration = 20 milliseconds
 
   "A tower given a block" should {
     "increase in height after receiving processPendingBlocks message" in {
@@ -44,7 +44,7 @@ class TowerSpec(_system: ActorSystem) extends TestKit(_system)
       addBlockToTower(Color.randomColor(), tower)
       tower ! HeightQuery
       expectMsg(waitTime, 1)
-      tower ! ApplyEffect(EnvironmentEffects.Lightning)
+      tower ! ApplyEffectCommand(EnvironmentEffects.Lightning)
       tower ! HeightQuery
       expectMsg(waitTime, 0)
     }
@@ -68,7 +68,7 @@ class TowerSpec(_system: ActorSystem) extends TestKit(_system)
     }
     "Lightning environment affect doesn't apply to empty tower" in {
       val tower = system.actorOf(Props[Tower])
-      tower ! ApplyEffect(EnvironmentEffects.Lightning)
+      tower ! ApplyEffectCommand(EnvironmentEffects.Lightning)
       tower ! HeightQuery
       expectMsg(waitTime, 0)
     }

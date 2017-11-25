@@ -1,10 +1,10 @@
-package com.github.willb611
+package com.github.willb611.humans
 
 import akka.actor.{ActorSystem, Props}
 import akka.testkit.{TestKit, TestProbe}
-import com.github.willb611.humans.Builder
-import com.github.willb611.humans.Builder.DoWork
-import com.github.willb611.objects.Environment.ApplyEffect
+import com.github.willb611.Color
+import com.github.willb611.humans.Builder.{DoWork, TowerToBuild}
+import com.github.willb611.objects.Environment.ApplyEffectCommand
 import com.github.willb611.objects.{EnvironmentEffects, Tower}
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
 
@@ -26,7 +26,7 @@ class BuilderSpec(_system: ActorSystem) extends TestKit(_system)
       val color = new Color("TEST")
       val testProbe = TestProbe()
       val builder = system.actorOf(Props(new Builder(color)))
-      builder ! Builder.TowerToBuild(testProbe.ref)
+      builder ! TowerToBuild(testProbe.ref)
       builder ! DoWork
       testProbe.expectMsg(waitTime, Tower.AddBlockRequest(color))
       builder ! DoWork
@@ -36,8 +36,8 @@ class BuilderSpec(_system: ActorSystem) extends TestKit(_system)
     "do nothing after being hit by lightning" in {
       val testProbe = TestProbe()
       val builder = system.actorOf(Props(new Builder(Color.randomColor())))
-      builder ! Builder.TowerToBuild(testProbe.ref)
-      builder ! ApplyEffect(EnvironmentEffects.Lightning)
+      builder ! TowerToBuild(testProbe.ref)
+      builder ! ApplyEffectCommand(EnvironmentEffects.Lightning)
       builder ! DoWork
       testProbe.expectNoMessage(waitTime)
     }
@@ -49,8 +49,8 @@ class BuilderSpec(_system: ActorSystem) extends TestKit(_system)
       val ignoredTestProbe = TestProbe()
       val testProbe = TestProbe()
       val builder = system.actorOf(Props(new Builder(testColor)))
-      builder ! Builder.TowerToBuild(ignoredTestProbe.ref)
-      builder ! Builder.TowerToBuild(testProbe.ref)
+      builder ! TowerToBuild(ignoredTestProbe.ref)
+      builder ! TowerToBuild(testProbe.ref)
       builder ! DoWork
       ignoredTestProbe.expectNoMessage(waitTime)
       testProbe.expectMsg(waitTime, Tower.AddBlockRequest(testColor))

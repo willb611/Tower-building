@@ -3,18 +3,16 @@ package com.github.willb611.humans
 import akka.actor.{Actor, ActorLogging, ActorRef}
 import akka.actor.Timers
 import com.github.willb611.Color
-import com.github.willb611.humans.Builder._
+import com.github.willb611.humans.Builder.{DoWork, TowerToBuild}
 import com.github.willb611.messages.Command
-import com.github.willb611.objects.Environment.ApplyEffect
 import com.github.willb611.objects.EnvironmentEffects
 import com.github.willb611.objects.EnvironmentEffects.EnvironmentEffect
+import com.github.willb611.objects.Environment.ApplyEffectCommand
 import com.github.willb611.objects.Tower.AddBlockRequest
 
-import scala.concurrent.duration._
 
 object Builder {
-  val DefaultBlockPlacementIntervalMillis: FiniteDuration = 100 milliseconds
-  //  private object DoWorkTimerKey
+  // Messages
   final case class TowerToBuild(towerActor: ActorRef)
   case class DoWork() extends Command
 }
@@ -24,10 +22,6 @@ class Builder(val colorToUseForBlocks: Color) extends Actor
   private var tower: Option[ActorRef] = None
 
   var activeEffects: List[EnvironmentEffect] = List()
-//
-//  def scheduleRegularWork(workInterval: FiniteDuration): Unit = {
-//    timers.startPeriodicTimer(DoWorkTimerKey, DoWork, workInterval)
-//  }
 
   private def doWork(time: Int): Unit = {
     if (activeEffects.isEmpty) {
@@ -61,7 +55,7 @@ class Builder(val colorToUseForBlocks: Color) extends Actor
       tower = Option(msg.towerActor)
     case DoWork =>
       doWork(1)
-    case effect: ApplyEffect =>
+    case effect: ApplyEffectCommand =>
       environmentEffect(effect.environmentEffect)
   }
 

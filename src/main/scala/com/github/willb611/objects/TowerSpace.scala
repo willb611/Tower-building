@@ -1,7 +1,7 @@
 package com.github.willb611.objects
 
 import akka.actor.{Actor, ActorLogging, ActorRef, Props}
-import com.github.willb611.objects.Environment.InEnvironment
+import com.github.willb611.objects.Environment.ActorJoinEnvironmentAdvisory
 import com.github.willb611.objects.TowerSpace.CountOfTowersWithColorRequest
 
 import scala.collection.mutable.ListBuffer
@@ -16,7 +16,7 @@ class TowerSpace(environment: ActorRef, towersToMake: Int) extends Actor with Ac
   override def preStart(): Unit = {
     for (_ <- 0 until towersToMake) {
       val t = context.actorOf(Props[Tower])
-      environment ! InEnvironment(t)
+      environment ! ActorJoinEnvironmentAdvisory(t)
       towers += t
     }
   }
