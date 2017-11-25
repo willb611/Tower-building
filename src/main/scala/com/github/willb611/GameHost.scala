@@ -6,16 +6,16 @@ import akka.actor.{Actor, ActorLogging, ActorRef, Props}
 import akka.pattern.ask
 import akka.util.Timeout
 import com.github.willb611.ColorCollectionHelper.CountOfColors
-import com.github.willb611.GameHost.WinningColorRequest
+import com.github.willb611.GameHost.WinningColorQuery
 import com.github.willb611.humans.BuilderCoordinator
+import com.github.willb611.messages.Query
 import com.github.willb611.objects.{Environment, TowerSpace}
 
 import scala.collection.mutable.ListBuffer
 import scala.concurrent.{Await, Future}
 
 object GameHost {
-  case class SetupGame(config: GameConfig)
-  case class WinningColorRequest(maxTimeout: Timeout)
+  case class WinningColorQuery(maxTimeout: Timeout) extends Query
 }
 
 class GameHost(gameConfig: GameConfig) extends Actor with ActorLogging {
@@ -24,23 +24,34 @@ class GameHost(gameConfig: GameConfig) extends Actor with ActorLogging {
   private val towerSpaces: ListBuffer[ActorRef] = ListBuffer()
 
   override def preStart(): Unit = {
+    log.info("[preStart] Entered method.")
+    var colors = Color.ansiColors
     for (_ <- 0 until gameConfig.coordinators) {
-      coordinators += context.actorOf(Props(new BuilderCoordinator(gameConfig.buildersPerCoordinator)))
+      if (colors.isEmpty) {
+        colors = Color.ansiColors
+      }
+      val c = Color.randomColor(colors)
+      colors = colors.filter(filtered => filtered != c)
+      coordinators += context.actorOf(Props(new BuilderCoordinator(gameConfig.buildersPerCoordinator, c)))
     }
     for (_ <- 0 until gameConfig.spacesForTowers) {
-      towerSpaces += context.actorOf(Props(new TowerSpace(environment, gameConfig.towersPerSpace)))
+      towerSpaces += context.actorOf(Props(new TowerSpace(environment, gameConfig.towersPerSpace)), "towerSpace")
     }
     super.preStart()
+    log.debug("[preStart] complete!")
   }
 
   override def receive: Receive = {
-    case winnerRequest: WinningColorRequest =>
+    case winnerRequest: WinningColorQuery =>
+      log.debug("[receive] Got WinningColorQuery")
       sender() ! currentlyWinningColor(winnerRequest.maxTimeout)
   }
 
   def currentlyWinningColor(timeout: Timeout): Option[Color] = {
     val colorCountMap: CountOfColors = buildCountOfTowerColors(timeout)
-    colorCountMap.highestPercentColor()
+    val result = colorCountMap.highestPercentColor()
+    log.info("[currentlyWinningColor] got {}", result)
+    result
   }
 
   private def buildCountOfTowerColors(timeout: Timeout): CountOfColors = {
@@ -58,7 +69,7 @@ class GameHost(gameConfig: GameConfig) extends Actor with ActorLogging {
       Await.result(futureResult, timeout.duration)
     } catch {
       case e: TimeoutException =>
-        log.error("[countOfTowersWithColor] Couldn't get color count from {}, timeout set to {}", towerSpace, timeout)
+        log.error("[countOfTowersWithColor] Couldn't get color count from {}, timeout set to {}. Error: {}", towerSpace, timeout, e)
         CountOfColors.EmptyCount
     }
   }

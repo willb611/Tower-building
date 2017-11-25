@@ -1,13 +1,16 @@
 package com.github.willb611.objects
 
 import akka.actor.{Actor, ActorLogging, ActorRef, Props}
+import com.github.willb611.ColorCollectionHelper.CountOfColors
+import com.github.willb611.messages.Query
 import com.github.willb611.objects.Environment.ActorJoinEnvironmentAdvisory
-import com.github.willb611.objects.TowerSpace.CountOfTowersWithColorRequest
+import com.github.willb611.objects.TowerSpace.{CountOfTowersWithColorRequest, TowersInSpaceQuery}
 
 import scala.collection.mutable.ListBuffer
 
 object TowerSpace {
   case class CountOfTowersWithColorRequest()
+  case object TowersInSpaceQuery extends Query
 }
 
 class TowerSpace(environment: ActorRef, towersToMake: Int) extends Actor with ActorLogging {
@@ -23,7 +26,9 @@ class TowerSpace(environment: ActorRef, towersToMake: Int) extends Actor with Ac
 
   override def receive = {
     case CountOfTowersWithColorRequest =>
-      throw new Exception("TODO")
-//      sender() ! ColorCollectionHelper.CountOfColors(null)
+      log.error("[receive] TODO")
+      sender() ! CountOfColors.EmptyCount
+    case TowersInSpaceQuery =>
+      sender() ! towers.toList
   }
 }
