@@ -42,6 +42,7 @@ class Tower(parent: Option[ActorRef]) extends Actor with ActorLogging {
       environmentEffect(message.environmentEffect)
     case ProcessPendingBlocks =>
       processPendingBlocks()
+      log.debug(s"[receive] Processed blocks, state is now: $toString")
     // queries
     case CountCountQuery =>
       sender() ! colorCount()

@@ -1,6 +1,6 @@
 package com.github.willb611
 
-import akka.actor.{ActorSystem, Props}
+import akka.actor.ActorSystem
 import akka.testkit.{TestKit, TestProbe}
 import com.github.willb611.objects.Environment.{ActorJoinEnvironmentAdvisory, ApplyEffectCommand, ApplyEffectsToActors}
 import com.github.willb611.objects.{Environment, EnvironmentEffects}
@@ -9,6 +9,7 @@ import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
 
 import scala.concurrent.duration.{FiniteDuration, _}
 import scala.util.Random
+import scala.language.higherKinds
 
 class EnvironmentSpec(_system: ActorSystem) extends TestKit(_system)
   with Matchers

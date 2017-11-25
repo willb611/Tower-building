@@ -1,36 +1,48 @@
 package com.github.willb611
 
-import akka.actor.{ActorRef, ActorSystem, Props}
+import akka.actor.{ActorRef, ActorSystem}
 import akka.pattern.ask
 import akka.util.Timeout
 import com.github.willb611.GameHost.WinningColorQuery
 import com.typesafe.scalalogging.LazyLogging
 
-import scala.concurrent.{Await, Future}
 import scala.concurrent.duration._
+import scala.concurrent.{Await, Future}
 
 object TowerGame extends App with LazyLogging {
   override def main(args: Array[String]): Unit = {
     logger.info("[main] Hello world")
     val actorSystem: ActorSystem = ActorSystem("TowerGame")
-    val coordinator: ActorRef = actorSystem.actorOf(Props(new GameHost(GameConfig())), "gameHost")
+    val gameHost: ActorRef = actorSystem.actorOf(GameHost.props(GameConfig()), GameHost.ActorName)
     Thread.sleep(4000)
-    logCurrentWinner(coordinator)
+    logCurrentWinner(gameHost)
     actorSystem.terminate()
   }
 
-  private def logCurrentWinner(coordinator: ActorRef): Unit = {
+  def requestCurrentWinner(gameHost: ActorRef, query: WinningColorQuery): Option[Color] = {
+    try {
+      val timeout = query.maxTimeout
+      logger.debug("[logCurrentWinner] Using gameHost: {}, timeout: {}, query: {}", gameHost, timeout, query)
+      logger.info(s"[logCurrentWinner] Querying gameHost $gameHost for the winner")
+      val gameHostResponse: Future[Any] = gameHost.ask(query)(timeout)
+      val resultAsTypeAny: Any = Await.result(gameHostResponse, timeout.duration)
+      resultAsTypeAny.asInstanceOf[Option[Color]]
+    } catch {
+      case e: Exception =>
+        logger.error(s"[requestCurrentWinner] Error: ${e.getMessage}, returning None", e)
+        None
+    }
+  }
+
+  private def logCurrentWinner(gameHost: ActorRef): Unit = {
     val timeout = Timeout(1 minute)
-    val query: WinningColorQuery = WinningColorQuery(Timeout(5 seconds))
-    logger.debug("[main] Using coordinator: {}, timeout: {}, query: {}", coordinator, timeout, query)
-    val coordinatorResponse: Future[Any] = coordinator.ask(query)(timeout)
-    val resultAsTypeAny: Any = Await.result(coordinatorResponse, timeout.duration)
-    val resultAsColorOption: Option[Color] = resultAsTypeAny.asInstanceOf[Option[Color]]
-    if (resultAsColorOption.isDefined) {
-      val result = resultAsColorOption.get
-      logger.info(s"${result.ansiCode}[main] Got winning color as: $result${Color.RESET.ansiCode}")
+    val query: WinningColorQuery = WinningColorQuery(timeout)
+    val resultOption = requestCurrentWinner(gameHost, query)
+    if (resultOption.isDefined) {
+      val result = resultOption.get
+      logger.info(s"${result.ansiCode}[logCurrentWinner] Got winning color as: $result${Color.RESET.ansiCode}")
     } else {
-      logger.info("[main] No winning color defined!")
+      logger.info("[logCurrentWinner] No winning color defined!")
     }
   }
 }

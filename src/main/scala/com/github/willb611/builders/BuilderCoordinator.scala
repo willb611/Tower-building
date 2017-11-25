@@ -18,7 +18,7 @@ object BuilderCoordinator {
   def props(buildersToCreate: Int, color: Color): Props = Props(new BuilderCoordinator(buildersToCreate, color))
   // Messages
   case class TowerSpaceAdvisory(towerSpace: ActorRef)
-  protected object AskBuildersToWork
+  protected final case object AskBuildersToWork
 }
 
 class BuilderCoordinator(buildersToCreate: Int, color: Color)
@@ -33,6 +33,7 @@ class BuilderCoordinator(buildersToCreate: Int, color: Color)
     for (_ <- 0 until buildersToCreate) {
       val builder = context.actorOf(Builder.props(color), builderNameIterator.next())
       builders += builder
+      log.debug(s"[preStart] Created builder $builder")
     }
     timers.startPeriodicTimer(WorkCommandTimerKey, AskBuildersToWork, BuilderWorkInterval)
     super.preStart()

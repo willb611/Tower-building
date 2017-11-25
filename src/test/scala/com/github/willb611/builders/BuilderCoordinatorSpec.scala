@@ -27,7 +27,7 @@ class BuilderCoordinatorSpec(_system: ActorSystem) extends TestKit(_system)
   }
   override val waitTime: FiniteDuration = 20 milliseconds
 
-  "A builder coordinator" should {
+  "A builder parent" should {
     "Tell a builder to do work" in {
       val tmpSys = ActorSystem("TmpSys-tell-builder-do-work")
       val testProbeAsTower = TestProbe()
@@ -40,7 +40,7 @@ class BuilderCoordinatorSpec(_system: ActorSystem) extends TestKit(_system)
       receiveOne(waitTime)
     }
   }
-  "A coordinator given TowerSpaceAdvisory(TowerSpace)" should {
+  "A parent given TowerSpaceAdvisory(TowerSpace)" should {
     "poll TowerSpace for towers" in {
       val testProbeAsTowerSpace = TestProbe()
       val coordinator = system.actorOf(BuilderCoordinator.props(0, Color.randomColor()))

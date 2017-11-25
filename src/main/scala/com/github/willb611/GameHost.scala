@@ -8,6 +8,7 @@ import akka.util.Timeout
 import com.github.willb611.ColorCollectionHelper.CountOfColors
 import com.github.willb611.GameHost.WinningColorQuery
 import com.github.willb611.builders.BuilderCoordinator
+import com.github.willb611.builders.BuilderCoordinator.TowerSpaceAdvisory
 import com.github.willb611.messages.Query
 import com.github.willb611.objects.{Environment, TowerSpace}
 
@@ -15,6 +16,10 @@ import scala.collection.mutable.ListBuffer
 import scala.concurrent.{Await, Future}
 
 object GameHost {
+  val ActorName: String = "gameHost"
+
+  def props(gameConfig: GameConfig): Props = Props(new GameHost(gameConfig))
+  // Messages
   case class WinningColorQuery(maxTimeout: Timeout) extends Query
 }
 
@@ -28,7 +33,7 @@ class GameHost(gameConfig: GameConfig) extends Actor with ActorLogging {
   private val towerSpaceNameIter = Iterator from 1 map (i => s"${TowerSpace.ActorNamePrefix}-$i")
 
   override def preStart(): Unit = {
-    log.info("[preStart] Entered method.")
+    log.info("[preStart] Setting up game.")
     var colors = Color.ansiColors
     for (_ <- 0 until gameConfig.coordinators) {
       if (colors.isEmpty) {
@@ -39,10 +44,12 @@ class GameHost(gameConfig: GameConfig) extends Actor with ActorLogging {
       coordinators += context.actorOf(BuilderCoordinator.props(gameConfig.buildersPerCoordinator, c), coordinatorNameIter.next())
     }
     for (_ <- 0 until gameConfig.spacesForTowers) {
-      towerSpaces += context.actorOf(TowerSpace.props(environment, gameConfig.towersPerSpace), towerSpaceNameIter.next())
+      val towerSpace = context.actorOf(TowerSpace.props(environment, gameConfig.towersPerSpace), towerSpaceNameIter.next())
+      towerSpaces += towerSpace
+      coordinators.foreach(coordinator => coordinator ! TowerSpaceAdvisory(towerSpace))
     }
     super.preStart()
-    log.debug("[preStart] complete!")
+    log.info("[preStart] Setup complete!")
   }
 
   override def receive: Receive = {
@@ -69,7 +76,9 @@ class GameHost(gameConfig: GameConfig) extends Actor with ActorLogging {
 
   def countOfTowersWithColor(towerSpace: ActorRef, timeout: Timeout): CountOfColors = {
     try {
-      val futureResult: Future[CountOfColors] = ask(towerSpace, TowerSpace.CountOfTowersWithColorRequest())(timeout).mapTo[CountOfColors]
+      val query = TowerSpace.CountOfTowersWithColorQuery
+      log.info(s"[countOfTowersWithColor] Sending query $query to $towerSpace")
+      val futureResult: Future[CountOfColors] = ask(towerSpace, query)(timeout).mapTo[CountOfColors]
       Await.result(futureResult, timeout.duration)
     } catch {
       case e: TimeoutException =>

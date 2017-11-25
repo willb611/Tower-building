@@ -59,4 +59,9 @@ object ColorCollectionHelper {
       CountOfColors.EmptyCount
     }
   }
+
+  def countOfColorsFromOneColor(color: Color): CountOfColors = {
+    val map = Map() + (color -> 1)
+    CountOfColors(map)
+  }
 }

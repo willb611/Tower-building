@@ -16,7 +16,7 @@ object Environment {
   // Messages
   case class ActorJoinEnvironmentAdvisory(actor: ActorRef)
   case class ApplyEffectCommand(environmentEffect: EnvironmentEffect) extends Command
-  object ApplyEffectsToActors extends Command
+  final case object ApplyEffectsToActors extends Command
 }
 
 class Environment(val random: Random, val effectInterval: FiniteDuration)
@@ -40,7 +40,6 @@ class Environment(val random: Random, val effectInterval: FiniteDuration)
     val applyEffect = random.nextBoolean()
     if (applyEffect) {
       val effect = nextEffect()
-      log.debug(s"About to apply affect $effect to $actorAffectedByEnvironment")
       actorAffectedByEnvironment ! ApplyEffectCommand(effect)
     }
     applyEffect

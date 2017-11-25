@@ -14,8 +14,8 @@ object Builder {
   val ActorNamePrefix: String = "builder"
   // Messages
   final case class TowerToBuild(towerActor: ActorRef)
-  case class DoWork() extends Command
-  object TowerBeingBuiltQuery extends Query
+  final case object DoWork extends Command
+  final case object TowerBeingBuiltQuery extends Query
 }
 
 class Builder(val colorToUseForBlocks: Color) extends Actor
@@ -28,7 +28,6 @@ class Builder(val colorToUseForBlocks: Color) extends Actor
     if (activeEffects.isEmpty) {
       buildForTime(time)
     } else {
-      log.debug(s"$this not placing block as affected by $activeEffects")
       if (activeEffects.contains(EnvironmentEffects.Lightning)) {
         activeEffects = activeEffects.dropWhile(_ == EnvironmentEffects.Lightning)
       }

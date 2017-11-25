@@ -1,7 +1,7 @@
 package com.github.willb611.helper
 
 import akka.actor.{ActorIdentity, ActorRef, ActorSystem, Identify}
-import akka.testkit.TestKit
+import akka.testkit.{TestKit, TestProbe}
 import com.typesafe.scalalogging.LazyLogging
 
 import scala.concurrent.duration._
@@ -9,14 +9,17 @@ import scala.concurrent.duration._
 trait ActorRetrieverByPath extends TestKit with LazyLogging {
   implicit val waitTime: FiniteDuration = 50 milliseconds
 
-  def firstChildFromParentInSystem(coordinator: ActorRef, sys: ActorSystem, childPrefix: String): ActorRef = {
+  def firstChildFromParentInSystem(parent: ActorRef, sys: ActorSystem, childPrefix: String): ActorRef = {
+    val probe = TestProbe()
     for (i: Int <- 0 until 5) {
+      val path = parent.path./(s"$childPrefix-$i")
       try {
-        sys.actorSelection(coordinator.path./(s"$childPrefix-$i")) ! Identify(None)
-        return actorRefFromIdentifyResult(receiveOne(waitTime))
+        sys.actorSelection(path).tell(Identify(None), probe.ref)
+        logger.debug(s"[firstChildFromParentInSystem] maybe found one at path $path")
+        return actorRefFromIdentifyResult(probe.receiveOne(waitTime))
       } catch {
         case e: Exception =>
-          logger.debug(s"failed with id $i, trying next..")
+          logger.debug(s"[firstChildFromParentInSystem] failed with path $path, trying next..")
       }
     }
     throw new Exception("Failed to find actor child")

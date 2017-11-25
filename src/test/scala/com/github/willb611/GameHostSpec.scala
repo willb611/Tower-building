@@ -1,6 +1,6 @@
 package com.github.willb611
 
-import akka.actor.{ActorRef, ActorSystem, Props}
+import akka.actor.{ActorRef, ActorSystem}
 import akka.testkit.{ImplicitSender, TestKit}
 import com.github.willb611.builders.Builder.TowerBeingBuiltQuery
 import com.github.willb611.builders.{Builder, BuilderCoordinator}
@@ -23,7 +23,7 @@ class GameHostSpec(_system: ActorSystem) extends TestKit(_system)
 
   "GameHost given gameConfig" should {
     "create a game according to config" in {
-      val host = system.actorOf(Props[GameHost])
+      val host = system.actorOf(GameHost.props(GameConfig()))
       val towerSpace = firstChildFromParentInSystem(host, system, TowerSpace.ActorNamePrefix)
       assert(towerSpace != null)
       val coordinator = firstChildFromParentInSystem(host, system, BuilderCoordinator.ActorNamePrefix)
@@ -31,10 +31,10 @@ class GameHostSpec(_system: ActorSystem) extends TestKit(_system)
       val builder = firstChildFromParentInSystem(coordinator, system, Builder.ActorNamePrefix)
       assert(builder != null)
       builder ! TowerBeingBuiltQuery
-      val res: Option[ActorRef] = receiveOne(waitTime).asInstanceOf[Option[ActorRef]]
-      assert(res != null)
-      assert(res.isDefined)
-      assert(res.get.path.toStringWithoutAddress.contains(Tower.ActorNamePrefix))
+      val towerWhichBuilderIsBuilding: Option[ActorRef] = receiveOne(waitTime).asInstanceOf[Option[ActorRef]]
+      assert(towerWhichBuilderIsBuilding != null)
+      assert(towerWhichBuilderIsBuilding.isDefined)
+      assert(towerWhichBuilderIsBuilding.get.path.toStringWithoutAddress.contains(Tower.ActorNamePrefix))
     }
   }
 }
