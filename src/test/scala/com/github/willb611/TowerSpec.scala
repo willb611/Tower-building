@@ -10,12 +10,12 @@ import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
 
 import scala.concurrent.duration.{FiniteDuration, _}
 
-class TowerTest (_system: ActorSystem) extends TestKit(_system)
+class TowerSpec(_system: ActorSystem) extends TestKit(_system)
   with Matchers
   with WordSpecLike
   with BeforeAndAfterAll
   with ImplicitSender {
-  def this() = this(ActorSystem("TowerTest"))
+  def this() = this(ActorSystem("TowerSpec"))
   override def afterAll: Unit = {
     TestKit.shutdownActorSystem(system)
   }

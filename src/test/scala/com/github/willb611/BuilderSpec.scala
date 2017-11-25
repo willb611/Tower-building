@@ -10,12 +10,12 @@ import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
 
 import scala.concurrent.duration._
 
-class BuilderTest(_system: ActorSystem) extends TestKit(_system)
+class BuilderSpec(_system: ActorSystem) extends TestKit(_system)
   with Matchers
   with WordSpecLike
   with BeforeAndAfterAll {
 
-  def this() = this(ActorSystem("BuilderTest"))
+  def this() = this(ActorSystem("BuilderSpec"))
   override def afterAll: Unit = {
     TestKit.shutdownActorSystem(system)
   }
