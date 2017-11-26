@@ -11,15 +11,15 @@ import scala.concurrent.{Await, Future}
 
 object TowerGame extends App with LazyLogging {
   final private val sleepTime = 10000
-  override def main(args: Array[String]): Unit = {
-    logger.info("[main] Hello world")
-    val actorSystem: ActorSystem = ActorSystem("TowerGame")
-    val configProps = GameHost.props(GameConfig.Default)
-    val gameHost: ActorRef = actorSystem.actorOf(configProps, GameHost.ActorName)
-    Thread.sleep(sleepTime)
-    logCurrentWinner(gameHost)
-    actorSystem.terminate()
-  }
+  // main
+  logger.info("[main] Hello world")
+  val actorSystem: ActorSystem = ActorSystem("TowerGame")
+  val configProps = GameHost.props(GameConfig.Default)
+  val gameHost: ActorRef = actorSystem.actorOf(configProps, GameHost.ActorName)
+  Thread.sleep(sleepTime)
+  logCurrentWinner(gameHost)
+  actorSystem.terminate()
+  // main
 
   def requestCurrentWinner(gameHost: ActorRef, query: WinningColorQuery): Option[Color] = {
     try {

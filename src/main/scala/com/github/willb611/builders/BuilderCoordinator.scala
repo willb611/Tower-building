@@ -1,10 +1,10 @@
 package com.github.willb611.builders
 
-import akka.actor.{Actor, ActorLogging, ActorRef, Props, Timers}
-import com.github.willb611.RandomHelper
-import com.github.willb611.builders.Builder.{DoWork, TowerToBuild}
+import akka.actor.{Actor, ActorLogging, ActorRef, Props, SupervisorStrategy, Timers}
+import com.github.willb611.GameHost.{TowerSpacesAdvisory, TowerSpacesQuery}
+import com.github.willb611.{Color, RandomHelper, RestartKilledSupervisionStrategy}
+import com.github.willb611.builders.Builder.{DoWork, TowerToBuild, TowerToBuildQuery}
 import com.github.willb611.builders.BuilderCoordinator._
-import com.github.willb611.Color
 import com.github.willb611.messages.Advisory
 import com.github.willb611.objects.TowerSpace.TowersInSpaceQuery
 
@@ -19,7 +19,6 @@ object BuilderCoordinator {
 
   def props(buildersToCreate: Int, color: Color): Props = Props(new BuilderCoordinator(buildersToCreate, color))
   // Messages
-  final case class TowerSpaceAdvisory(towerSpace: ActorRef) extends Advisory
   final case class TowerListAdvisory(towers: List[ActorRef]) extends Advisory
   protected final case object AskBuildersToWork
 }
@@ -28,6 +27,7 @@ class BuilderCoordinator(buildersToCreate: Int, color: Color)
   extends Actor
     with ActorLogging
     with Timers {
+  override val supervisorStrategy: SupervisorStrategy = RestartKilledSupervisionStrategy(super.supervisorStrategy).strategy
   private val builderNameIterator = Iterator from 1 map (i => s"${Builder.ActorNamePrefix}-$i")
   var builders: ListBuffer[ActorRef] = ListBuffer()
   var towers: Set[ActorRef] = Set()
@@ -39,6 +39,7 @@ class BuilderCoordinator(buildersToCreate: Int, color: Color)
       log.debug(s"[preStart] Created builder $builder")
     }
     timers.startPeriodicTimer(WorkCommandTimerKey, AskBuildersToWork, BuilderWorkInterval)
+    context.parent ! TowerSpacesQuery
     super.preStart()
   }
 
@@ -55,8 +56,9 @@ class BuilderCoordinator(buildersToCreate: Int, color: Color)
   }
 
   override def receive = {
-    case msg: TowerSpaceAdvisory =>
-      msg.towerSpace ! TowersInSpaceQuery
+    case msg: TowerSpacesAdvisory =>
+      log.debug(s"[receive] got $msg")
+      msg.towerSpaces.foreach(t => t ! TowersInSpaceQuery)
     case list: List[ActorRef] =>
       log.debug(s"[receive] Got towers: $list")
       list.foreach(ref => {
@@ -66,5 +68,10 @@ class BuilderCoordinator(buildersToCreate: Int, color: Color)
     case AskBuildersToWork =>
       log.debug("[receive] Prompting builders to work..")
       builders.foreach(b => b ! DoWork)
+    // Queries
+    case TowerToBuildQuery =>
+      if (towers.nonEmpty) {
+        updateBuilders()
+      }
   }
 }

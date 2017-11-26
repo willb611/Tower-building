@@ -15,7 +15,7 @@ object ChaosMonkey {
 
   def props(random: Random): Props = Props(new ChaosMonkey(random))
   final case object ChaosTimerKey
-  final val IntervalForChaos: FiniteDuration = 100 millis
+  final val IntervalForChaos: FiniteDuration = 1000 millis
   final case object QueryForVictimsTimerKey
   private final val IntervalToSeekNewVictims: FiniteDuration = 500 millis
   // Messages

@@ -48,6 +48,7 @@ class Tower(parent: Option[ActorRef])
 
   override def receive = {
     case message: AddBlockRequest =>
+      log.debug(s"[receive] Received $message from ${sender()}")
       parentActor() ! ActorJoinEnvironmentAdvisory(sender())
       pendingBlocks = message.colorToUseForBlocks :: pendingBlocks
     // commands
@@ -112,7 +113,7 @@ class Tower(parent: Option[ActorRef])
     log.debug(s"[environmentEffect] Effected by $effect, height now ${height()}")
   }
 
-  override def toString: String = {
+  def towerState: String = {
     val prefix = s"[Tower]{h=${height()}"
     if (highestPercentColor().isDefined) {
       var result = prefix + s",colored=${highestPercentColor().get},blocks={"
@@ -125,6 +126,6 @@ class Tower(parent: Option[ActorRef])
   }
 
   def consoleOutputString(): String = { 
-    highestPercentColor().getOrElse(Color.RESET).ansiCode + toString() + Color.RESET.ansiCode
+     highestPercentColor().getOrElse(Color.RESET).ansiCode + toString + towerState + Color.RESET.ansiCode
   }
 }

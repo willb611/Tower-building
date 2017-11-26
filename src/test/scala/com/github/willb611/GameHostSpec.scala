@@ -25,6 +25,7 @@ class GameHostSpec(_system: ActorSystem) extends TestKit(_system)
   "GameHost given gameConfig" should {
     "create a game according to config" in {
       val host = system.actorOf(GameHost.props(GameConfig(1, 1, 1, 1)))
+      Thread.sleep(waitTime.toMillis)
       val towerSpace = firstChildFromParentInSystem(host, system, TowerSpace.ActorNamePrefix)
       assert(towerSpace != null)
       val coordinator = firstChildFromParentInSystem(host, system, BuilderCoordinator.ActorNamePrefix)

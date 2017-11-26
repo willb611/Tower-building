@@ -2,7 +2,7 @@ package com.github.willb611
 
 import java.util.concurrent.TimeoutException
 
-import akka.actor.{Actor, ActorLogging, ActorRef, Props}
+import akka.actor.{Actor, ActorLogging, ActorRef, Props, SupervisorStrategy}
 import akka.pattern.ask
 import akka.util.Timeout
 import com.github.willb611.GameHost._
@@ -29,6 +29,7 @@ object GameHost {
 }
 
 class GameHost(gameConfig: GameConfig) extends Actor with ActorLogging {
+  override val supervisorStrategy: SupervisorStrategy = RestartKilledSupervisionStrategy(super.supervisorStrategy).strategy
   private val environment: ActorRef = context.actorOf(Props[Environment])
 
   private val coordinators: ListBuffer[ActorRef] = ListBuffer()
@@ -55,7 +56,6 @@ class GameHost(gameConfig: GameConfig) extends Actor with ActorLogging {
     for (_ <- 0 until gameConfig.towerSpaceCount) {
       val towerSpace = context.actorOf(TowerSpace.props(environment, gameConfig.towersPerSpace), towerSpaceNameIter.next())
       towerSpaces += towerSpace
-      coordinators.foreach(coordinator => coordinator ! TowerSpaceAdvisory(towerSpace))
     }
   }
 
@@ -76,8 +76,11 @@ class GameHost(gameConfig: GameConfig) extends Actor with ActorLogging {
     case winnerRequest: WinningColorQuery =>
       log.debug("[receive] Got WinningColorQuery")
       sender() ! currentlyWinningColor(winnerRequest.maxTimeout)
+    // queries
     case TowerSpacesQuery =>
-      sender() ! TowerSpacesAdvisory(towerSpaces.toList)
+      val response = TowerSpacesAdvisory(towerSpaces.toList)
+      log.debug(s"[receive] Responding to $TowerSpacesQuery with $response")
+      sender() ! response
     case BuilderCoordinatorsQuery =>
       sender() ! BuilderCoordinatorsAdvisory(coordinators.toList)
   }

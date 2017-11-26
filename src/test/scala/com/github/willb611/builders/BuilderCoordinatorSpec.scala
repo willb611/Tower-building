@@ -3,8 +3,8 @@ package com.github.willb611.builders
 import akka.actor.{ActorSystem, Props}
 import akka.testkit.{ImplicitSender, TestKit, TestProbe}
 import com.github.willb611.builders.Builder.{TowerBeingBuiltQuery, TowerToBuild}
-import com.github.willb611.builders.BuilderCoordinator.TowerSpaceAdvisory
 import com.github.willb611.Color
+import com.github.willb611.GameHost.TowerSpacesAdvisory
 import com.github.willb611.helper.ActorRetrieverByPath
 import com.github.willb611.objects.Tower
 import com.github.willb611.objects.Tower.AddBlockRequest
@@ -44,7 +44,7 @@ class BuilderCoordinatorSpec(_system: ActorSystem) extends TestKit(_system)
     "poll TowerSpace for towers" in {
       val testProbeAsTowerSpace = TestProbe()
       val coordinator = system.actorOf(BuilderCoordinator.props(0, Color.randomColor()))
-      coordinator ! TowerSpaceAdvisory(testProbeAsTowerSpace.ref)
+      coordinator ! TowerSpacesAdvisory(List(testProbeAsTowerSpace.ref))
       testProbeAsTowerSpace.expectMsg(waitTime, TowersInSpaceQuery)
     }
     "forward one tower from response, onto tower" in {

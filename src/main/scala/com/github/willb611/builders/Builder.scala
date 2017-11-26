@@ -1,7 +1,7 @@
 package com.github.willb611.builders
 
 import akka.actor.{Actor, ActorLogging, ActorRef, Props, Timers}
-import com.github.willb611.builders.Builder.{DoWork, TowerBeingBuiltQuery, TowerToBuild}
+import com.github.willb611.builders.Builder.{DoWork, TowerBeingBuiltQuery, TowerToBuild, TowerToBuildQuery}
 import com.github.willb611.Color
 import com.github.willb611.messages.{Advisory, Command, Query}
 import com.github.willb611.objects.EnvironmentEffects
@@ -14,6 +14,7 @@ object Builder {
   val ActorNamePrefix: String = "builder"
   // Messages
   final case class TowerToBuild(towerActor: ActorRef) extends Advisory
+  final case object TowerToBuildQuery extends Query
   final case object DoWork extends Command
   final case object TowerBeingBuiltQuery extends Query
 }
@@ -23,6 +24,11 @@ class Builder(val colorToUseForBlocks: Color) extends Actor
   private var tower: Option[ActorRef] = None
 
   var activeEffects: List[EnvironmentEffect] = List()
+
+  override def preStart(): Unit = {
+    context.parent ! TowerToBuildQuery
+    super.preStart()
+  }
 
   private def doWork(time: Int): Unit = {
     if (activeEffects.isEmpty) {
@@ -38,6 +44,8 @@ class Builder(val colorToUseForBlocks: Color) extends Actor
     for (_ <- 0 until time) {
       if (tower.isDefined) {
         tower.get ! AddBlockRequest(colorToUseForBlocks)
+      } else {
+        log.warning("[buildForTime] No tower found!")
       }
     }
   }
