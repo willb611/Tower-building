@@ -28,11 +28,11 @@ object Color extends LazyLogging {
   }
 }
 
-class Color(val hexVal: String, val ansiCode: String) {
-  def this(hex: String) = this(hex, "")
+class Color(val description: String, val ansiCode: String) {
+  def this(description: String) = this(description, "")
   def this() = this("FFFFFF")
 
   override def toString: String = {
-    hexVal
+    ansiCode + description + Color.RESET.ansiCode
   }
 }

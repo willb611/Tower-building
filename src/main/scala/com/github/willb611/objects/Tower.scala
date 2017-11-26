@@ -57,6 +57,7 @@ class Tower(parent: Option[ActorRef])
     // queries
     case CountCountQuery =>
       sender() ! colorCount()
+      log.info(s"[receive] Received $CountCountQuery, current state: $toString")
     case HeightQuery =>
       sender() ! height()
     case LastColorQuery =>
@@ -111,7 +112,7 @@ class Tower(parent: Option[ActorRef])
   }
 
   override def toString: String = {
-    val prefix = s"[Tower]{h=${height()}}"
+    val prefix = s"[Tower]{h=${height()}"
     if (highestPercentColor().isDefined) {
       var result = prefix + s",colored=${highestPercentColor().get},blocks={"
       result += blocks mkString ","

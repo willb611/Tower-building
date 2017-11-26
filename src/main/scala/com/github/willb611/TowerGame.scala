@@ -10,11 +10,12 @@ import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
 
 object TowerGame extends App with LazyLogging {
+  final private val sleepTime = 10000
   override def main(args: Array[String]): Unit = {
     logger.info("[main] Hello world")
     val actorSystem: ActorSystem = ActorSystem("TowerGame")
     val gameHost: ActorRef = actorSystem.actorOf(GameHost.props(GameConfig()), GameHost.ActorName)
-    Thread.sleep(4000)
+    Thread.sleep(sleepTime)
     logCurrentWinner(gameHost)
     actorSystem.terminate()
   }
