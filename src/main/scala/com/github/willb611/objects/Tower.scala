@@ -119,7 +119,7 @@ class Tower(parent: Option[ActorRef])
       result += "}"
       result
     } else {
-      prefix
+      prefix + ",blocks={}}"
     }
   }
 

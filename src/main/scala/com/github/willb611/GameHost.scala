@@ -61,7 +61,7 @@ class GameHost(gameConfig: GameConfig) extends Actor with ActorLogging {
   def currentlyWinningColor(timeout: Timeout): Option[Color] = {
     val colorCountMap: CountOfColors = buildCountOfTowerColors(timeout)
     val result = colorCountMap.highestPercentColor()
-    log.info("[currentlyWinningColor] got {}", result)
+    log.info(s"[currentlyWinningColor] From $colorCountMap got $result")
     result
   }
 

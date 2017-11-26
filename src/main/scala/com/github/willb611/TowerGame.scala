@@ -50,7 +50,7 @@ object TowerGame extends App with LazyLogging {
 
 case class GameConfig() {
   val coordinators: Int = 5
-  val buildersPerCoordinator: Int = 15
-  val spacesForTowers: Int = 1
+  val buildersPerCoordinator: Int = 50
+  val spacesForTowers: Int = 5
   val towersPerSpace: Int = 5
 }
