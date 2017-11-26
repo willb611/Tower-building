@@ -7,7 +7,8 @@ import com.github.willb611.builders.Builder
 import com.github.willb611.builders.Builder.{DoWork, TowerToBuild}
 import com.github.willb611.objects.Environment.{ActorJoinEnvironmentAdvisory, ApplyEffectCommand}
 import com.github.willb611.objects.Tower._
-import com.github.willb611.{Color, ColorCollectionHelper}
+import com.github.willb611.ColorCollectionHelper
+import com.github.willb611.Color
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
 
 import scala.concurrent.duration.{FiniteDuration, _}
@@ -111,7 +112,7 @@ class TowerSpec(_system: ActorSystem) extends TestKit(_system)
       expectMsg(waitTime, 0)
       tower ! AddBlockRequest(Color.GREEN)
       tower ! AddBlockRequest(Color.GREEN)
-      Thread.sleep(500)
+      Thread.sleep((2 * Tower.processBlocksInterval).toMillis)
       tower ! HeightQuery
       expectMsg(waitTime, 1)
     }

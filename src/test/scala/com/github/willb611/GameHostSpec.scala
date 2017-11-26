@@ -2,6 +2,7 @@ package com.github.willb611
 
 import akka.actor.{ActorRef, ActorSystem}
 import akka.testkit.{ImplicitSender, TestKit}
+import com.github.willb611.GameHost.{BuilderCoordinatorsAdvisory, TowerSpacesAdvisory}
 import com.github.willb611.builders.Builder.TowerBeingBuiltQuery
 import com.github.willb611.builders.{Builder, BuilderCoordinator}
 import com.github.willb611.helper.ActorRetrieverByPath
@@ -23,7 +24,7 @@ class GameHostSpec(_system: ActorSystem) extends TestKit(_system)
 
   "GameHost given gameConfig" should {
     "create a game according to config" in {
-      val host = system.actorOf(GameHost.props(GameConfig()))
+      val host = system.actorOf(GameHost.props(GameConfig(1, 1, 1, 1)))
       val towerSpace = firstChildFromParentInSystem(host, system, TowerSpace.ActorNamePrefix)
       assert(towerSpace != null)
       val coordinator = firstChildFromParentInSystem(host, system, BuilderCoordinator.ActorNamePrefix)
@@ -35,6 +36,16 @@ class GameHostSpec(_system: ActorSystem) extends TestKit(_system)
       assert(towerWhichBuilderIsBuilding != null)
       assert(towerWhichBuilderIsBuilding.isDefined)
       assert(towerWhichBuilderIsBuilding.get.path.toStringWithoutAddress.contains(Tower.ActorNamePrefix))
+    }
+  }
+
+  "GameHost " should {
+    "respond to chaos monkey queries" in {
+      val gameHost = system.actorOf(GameHost.props(GameConfig.ZeroValues))
+      gameHost ! GameHost.BuilderCoordinatorsQuery
+      expectMsg(waitTime, BuilderCoordinatorsAdvisory(List()))
+      gameHost ! GameHost.TowerSpacesQuery
+      expectMsg(waitTime, TowerSpacesAdvisory(List()))
     }
   }
 }

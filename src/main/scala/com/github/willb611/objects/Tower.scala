@@ -6,7 +6,8 @@ import com.github.willb611.messages.{Command, Query}
 import com.github.willb611.objects.Environment.{ActorJoinEnvironmentAdvisory, ApplyEffectCommand}
 import com.github.willb611.objects.EnvironmentEffects.EnvironmentEffect
 import com.github.willb611.objects.Tower._
-import com.github.willb611.{Color, ColorCollectionHelper}
+import com.github.willb611.ColorCollectionHelper
+import com.github.willb611.Color
 
 import scala.concurrent.duration.{FiniteDuration, _}
 

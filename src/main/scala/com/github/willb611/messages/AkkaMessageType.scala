@@ -5,3 +5,6 @@ class Query
 
 // Tell an actor to do something
 class Command
+
+// Advise an actor about something
+class Advisory

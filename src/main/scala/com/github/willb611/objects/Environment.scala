@@ -1,7 +1,7 @@
 package com.github.willb611.objects
 
 import akka.actor.{Actor, ActorLogging, ActorRef, Props, Timers}
-import com.github.willb611.messages.Command
+import com.github.willb611.messages.{Advisory, Command}
 import com.github.willb611.objects.Environment.{ActorJoinEnvironmentAdvisory, ApplyEffectCommand, ApplyEffectsToActors, EnvironmentEffectTimerKey}
 import com.github.willb611.objects.EnvironmentEffects.EnvironmentEffect
 
@@ -14,7 +14,7 @@ object Environment {
   val DefaultEffectInterval: FiniteDuration = 100 milliseconds
   private object EnvironmentEffectTimerKey
   // Messages
-  case class ActorJoinEnvironmentAdvisory(actor: ActorRef)
+  case class ActorJoinEnvironmentAdvisory(actor: ActorRef) extends Advisory
   case class ApplyEffectCommand(environmentEffect: EnvironmentEffect) extends Command
   final case object ApplyEffectsToActors extends Command
 }

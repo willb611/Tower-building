@@ -3,8 +3,8 @@ package com.github.willb611.objects
 import akka.actor.{Actor, ActorLogging, ActorRef, Props}
 import akka.pattern.ask
 import akka.util.Timeout
-import com.github.willb611.Color
 import com.github.willb611.ColorCollectionHelper.{CountOfColors, countOfColorsFromOneColor}
+import com.github.willb611.Color
 import com.github.willb611.messages.Query
 import com.github.willb611.objects.Environment.ActorJoinEnvironmentAdvisory
 import com.github.willb611.objects.Tower.CountCountQuery

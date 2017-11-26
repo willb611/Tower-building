@@ -2,9 +2,9 @@ package com.github.willb611.builders
 
 import akka.actor.{ActorSystem, Props}
 import akka.testkit.{ImplicitSender, TestKit, TestProbe}
-import com.github.willb611.Color
 import com.github.willb611.builders.Builder.{TowerBeingBuiltQuery, TowerToBuild}
 import com.github.willb611.builders.BuilderCoordinator.TowerSpaceAdvisory
+import com.github.willb611.Color
 import com.github.willb611.helper.ActorRetrieverByPath
 import com.github.willb611.objects.Tower
 import com.github.willb611.objects.Tower.AddBlockRequest
@@ -34,7 +34,7 @@ class BuilderCoordinatorSpec(_system: ActorSystem) extends TestKit(_system)
       val coordinator = tmpSys.actorOf(BuilderCoordinator.props(1, Color.randomColor()))
       val child = firstChildFromParentInSystem(coordinator, tmpSys, Builder.ActorNamePrefix)
       child ! TowerToBuild(testProbeAsTower.ref)
-      Thread.sleep(200)
+      Thread.sleep(BuilderCoordinator.BuilderWorkInterval.plus(waitTime).toMillis)
       testProbeAsTower.expectMsgType[AddBlockRequest](waitTime.plus(BuilderCoordinator.BuilderWorkInterval))
       TestKit.shutdownActorSystem(tmpSys)
       receiveOne(waitTime)
@@ -56,7 +56,7 @@ class BuilderCoordinatorSpec(_system: ActorSystem) extends TestKit(_system)
       child ! TowerBeingBuiltQuery
       expectMsg(waitTime, None)
       coordinator ! List(tower)
-      Thread.sleep(200)
+      Thread.sleep(waitTime.toMillis)
       child ! TowerBeingBuiltQuery
       expectMsg(waitTime, Some(tower))
       TestKit.shutdownActorSystem(tmpSys)

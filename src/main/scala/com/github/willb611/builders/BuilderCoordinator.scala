@@ -1,9 +1,11 @@
 package com.github.willb611.builders
 
 import akka.actor.{Actor, ActorLogging, ActorRef, Props, Timers}
-import com.github.willb611.{Color, RandomHelper}
+import com.github.willb611.RandomHelper
 import com.github.willb611.builders.Builder.{DoWork, TowerToBuild}
 import com.github.willb611.builders.BuilderCoordinator._
+import com.github.willb611.Color
+import com.github.willb611.messages.Advisory
 import com.github.willb611.objects.TowerSpace.TowersInSpaceQuery
 
 import scala.collection.mutable.ListBuffer
@@ -17,7 +19,8 @@ object BuilderCoordinator {
 
   def props(buildersToCreate: Int, color: Color): Props = Props(new BuilderCoordinator(buildersToCreate, color))
   // Messages
-  case class TowerSpaceAdvisory(towerSpace: ActorRef)
+  final case class TowerSpaceAdvisory(towerSpace: ActorRef) extends Advisory
+  final case class TowerListAdvisory(towers: List[ActorRef]) extends Advisory
   protected final case object AskBuildersToWork
 }
 

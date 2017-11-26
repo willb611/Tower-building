@@ -14,7 +14,8 @@ object TowerGame extends App with LazyLogging {
   override def main(args: Array[String]): Unit = {
     logger.info("[main] Hello world")
     val actorSystem: ActorSystem = ActorSystem("TowerGame")
-    val gameHost: ActorRef = actorSystem.actorOf(GameHost.props(GameConfig()), GameHost.ActorName)
+    val configProps = GameHost.props(GameConfig.Default)
+    val gameHost: ActorRef = actorSystem.actorOf(configProps, GameHost.ActorName)
     Thread.sleep(sleepTime)
     logCurrentWinner(gameHost)
     actorSystem.terminate()
@@ -48,9 +49,12 @@ object TowerGame extends App with LazyLogging {
   }
 }
 
-case class GameConfig() {
-  val coordinators: Int = 5
-  val buildersPerCoordinator: Int = 50
-  val spacesForTowers: Int = 5
-  val towersPerSpace: Int = 5
+object GameConfig {
+  val ZeroValues: GameConfig = GameConfig(0, 0, 0, 0)
+  val Default: GameConfig = GameConfig(5, 50, 5, 5)
+}
+case class GameConfig(coordinatorCount: Int,
+                      buildersPerCoordinator: Int,
+                      towerSpaceCount: Int,
+                      towersPerSpace: Int) {
 }
