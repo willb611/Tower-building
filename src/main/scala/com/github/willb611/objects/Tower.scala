@@ -2,12 +2,11 @@ package com.github.willb611.objects
 
 import akka.actor.{Actor, ActorLogging, ActorRef, Props, Timers}
 import com.github.willb611.ColorCollectionHelper.CountOfColors
-import com.github.willb611.messages.{Command, Query}
+import com.github.willb611.messages.{Command, Query, Request}
 import com.github.willb611.objects.Environment.{ActorJoinEnvironmentAdvisory, ApplyEffectCommand}
 import com.github.willb611.objects.EnvironmentEffects.EnvironmentEffect
 import com.github.willb611.objects.Tower._
-import com.github.willb611.ColorCollectionHelper
-import com.github.willb611.Color
+import com.github.willb611.{Color, ColorCollectionHelper, UnhandledMessagesLogged}
 
 import scala.concurrent.duration.{FiniteDuration, _}
 
@@ -17,7 +16,7 @@ object Tower {
   val processBlocksInterval: FiniteDuration = 100 millis
   private final case object TimerKey
   // Messages
-  final case class AddBlockRequest(colorToUseForBlocks: Color)
+  final case class AddBlockRequest(colorToUseForBlocks: Color) extends Request
   final case object ProcessPendingBlocksCommand extends Command
 
   final case object CountCountQuery extends Query
@@ -27,8 +26,9 @@ object Tower {
 
 class Tower(parent: Option[ActorRef])
   extends Actor
+    with Timers
     with ActorLogging
-    with Timers {
+    with UnhandledMessagesLogged {
   def this() = this(None)
   private var blocks: List[Color] = List()
   private var pendingBlocks: List[Color] = List()
@@ -64,11 +64,6 @@ class Tower(parent: Option[ActorRef])
       sender() ! height()
     case LastColorQuery =>
       sender() ! lastColor()
-  }
-
-  override def unhandled(message: Any): Unit = {
-    log.debug("[unhandled] Given unexpected message: {}", message)
-    super.unhandled(message)
   }
 
   def processPendingBlocks(): Unit = {

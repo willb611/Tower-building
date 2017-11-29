@@ -1,11 +1,11 @@
 package com.github.willb611.builders
 
-import akka.actor.{ActorSystem, Props}
+import akka.actor.{ActorRef, ActorSystem, Props}
 import akka.testkit.{ImplicitSender, TestKit, TestProbe}
 import com.github.willb611.builders.Builder.{TowerBeingBuiltQuery, TowerToBuild}
-import com.github.willb611.Color
-import com.github.willb611.GameHost.TowerSpacesAdvisory
-import com.github.willb611.builders.BuilderCoordinator.TowerListAdvisory
+import com.github.willb611.{Color, GameConfig, GameHost}
+import com.github.willb611.GameHost.{TowerSpacesAdvisory, TowerSpacesQuery}
+import com.github.willb611.builders.BuilderCoordinator.{BuilderListAdvisory, BuildersBeingCoordinatedQuery, TowerListAdvisory}
 import com.github.willb611.helper.ActorRetrieverByPath
 import com.github.willb611.objects.Tower
 import com.github.willb611.objects.Tower.AddBlockRequest
@@ -41,7 +41,7 @@ class BuilderCoordinatorSpec(_system: ActorSystem) extends TestKit(_system)
       receiveOne(waitTime)
     }
   }
-  "A parent given TowerSpaceAdvisory(TowerSpace)" should {
+  "A coordinator given TowerSpaceAdvisory(TowerSpace)" should {
     "poll TowerSpace for towers" in {
       val testProbeAsTowerSpace = TestProbe()
       val coordinator = system.actorOf(BuilderCoordinator.props(0, Color.randomColor()))
@@ -61,6 +61,20 @@ class BuilderCoordinatorSpec(_system: ActorSystem) extends TestKit(_system)
       child ! TowerBeingBuiltQuery
       expectMsg(waitTime, Some(tower))
       TestKit.shutdownActorSystem(tmpSys)
+    }
+  }
+  "A coordinator" should {
+    "Respond to BuildersBeingCoordinated" in {
+//      val dummyParent = system.actorOf(GameHost.props(GameConfig.ZeroValues))
+      val num = 1
+      val coordinator: ActorRef = system.actorOf(BuilderCoordinator.props(num, Color.randomColor()))
+      coordinator ! BuildersBeingCoordinatedQuery
+      // Then
+      val response: AnyRef = receiveOne(waitTime)
+      val responseAsAdvisory = response.asInstanceOf[BuilderListAdvisory]
+      assert(null != responseAsAdvisory)
+      assert(num == responseAsAdvisory.builders.size)
+//      val expected = firstChildFromParentInSystem(dummyParent, system, Builder.ActorNamePrefix)
     }
   }
 }

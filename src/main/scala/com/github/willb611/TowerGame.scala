@@ -9,7 +9,9 @@ import com.typesafe.scalalogging.LazyLogging
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
 
-object TowerGame extends App with LazyLogging {
+object TowerGame
+  extends App
+    with LazyLogging {
   final private val sleepTime = 10000
   // main
   logger.info("[main] Hello world")

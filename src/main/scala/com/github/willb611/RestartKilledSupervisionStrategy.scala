@@ -6,7 +6,8 @@ import com.typesafe.scalalogging.LazyLogging
 
 import scala.concurrent.duration._
 
-case class RestartKilledSupervisionStrategy(superSupervisionStrategy: SupervisorStrategy) extends LazyLogging {
+case class RestartKilledSupervisionStrategy(superSupervisionStrategy: SupervisorStrategy)
+  extends LazyLogging {
   val strategy: SupervisorStrategy = OneForOneStrategy(maxNrOfRetries = 10, withinTimeRange = 1 minute) {
     case e: ActorKilledException =>
       logger.info(s"Actor died from ${e.getMessage}, restarting..", e)

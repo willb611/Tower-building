@@ -2,31 +2,35 @@ package com.github.willb611.builders
 
 import akka.actor.{Actor, ActorLogging, ActorRef, Props, SupervisorStrategy, Timers}
 import com.github.willb611.GameHost.{TowerSpacesAdvisory, TowerSpacesQuery}
-import com.github.willb611.{Color, RandomHelper, RestartKilledSupervisionStrategy}
+import com.github.willb611.{Color, RandomHelper, RestartKilledSupervisionStrategy, UnhandledMessagesLogged}
 import com.github.willb611.builders.Builder.{DoWork, TowerToBuild, TowerToBuildQuery}
 import com.github.willb611.builders.BuilderCoordinator._
-import com.github.willb611.messages.Advisory
+import com.github.willb611.messages.{Advisory, Command, Query}
 import com.github.willb611.objects.TowerSpace.TowersInSpaceQuery
 
 import scala.collection.mutable.ListBuffer
 import scala.concurrent.duration.{FiniteDuration, _}
+import scala.language.postfixOps
 
 object BuilderCoordinator {
   val ActorNamePrefix: String = "coordinator"
 
   val BuilderWorkInterval: FiniteDuration = 200 millis
   private object WorkCommandTimerKey
-
   def props(buildersToCreate: Int, color: Color): Props = Props(new BuilderCoordinator(buildersToCreate, color))
+
   // Messages
+  final case object BuildersBeingCoordinatedQuery extends Query
   final case class TowerListAdvisory(towers: List[ActorRef]) extends Advisory
-  protected final case object AskBuildersToWork
+  final case class BuilderListAdvisory(builders: List[ActorRef]) extends Advisory
+  protected final case object AskBuildersToWork extends Command
 }
 
 class BuilderCoordinator(buildersToCreate: Int, color: Color)
   extends Actor
     with ActorLogging
-    with Timers {
+    with Timers
+    with UnhandledMessagesLogged {
   override val supervisorStrategy: SupervisorStrategy = RestartKilledSupervisionStrategy(super.supervisorStrategy).strategy
   private val builderNameIterator = Iterator from 1 map (i => s"${Builder.ActorNamePrefix}-$i")
   var builders: ListBuffer[ActorRef] = ListBuffer()

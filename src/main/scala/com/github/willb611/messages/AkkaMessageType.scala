@@ -8,3 +8,6 @@ class Command
 
 // Advise an actor about something
 class Advisory
+
+// Please do something
+class Request

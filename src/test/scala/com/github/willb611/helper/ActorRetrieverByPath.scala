@@ -5,6 +5,7 @@ import akka.testkit.{TestKit, TestProbe}
 import com.typesafe.scalalogging.LazyLogging
 
 import scala.concurrent.duration._
+import scala.language.postfixOps
 
 trait ActorRetrieverByPath extends TestKit with LazyLogging {
   implicit val waitTime: FiniteDuration = 50 milliseconds

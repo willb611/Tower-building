@@ -8,7 +8,7 @@ import akka.util.Timeout
 import com.github.willb611.GameHost._
 import com.github.willb611.builders.BuilderCoordinator
 import ColorCollectionHelper.CountOfColors
-import com.github.willb611.messages.Query
+import com.github.willb611.messages.{Advisory, Query}
 import com.github.willb611.objects.{Environment, TowerSpace}
 
 import scala.collection.mutable.ListBuffer
@@ -23,11 +23,14 @@ object GameHost {
   object TowerSpacesQuery extends Query
   object BuilderCoordinatorsQuery extends Query
   // Response
-  case class BuilderCoordinatorsAdvisory(coordinators: List[ActorRef])
-  case class TowerSpacesAdvisory(towerSpaces: List[ActorRef])
+  case class BuilderCoordinatorsAdvisory(coordinators: List[ActorRef]) extends Advisory
+  case class TowerSpacesAdvisory(towerSpaces: List[ActorRef]) extends Advisory
 }
 
-class GameHost(gameConfig: GameConfig) extends Actor with ActorLogging {
+class GameHost(gameConfig: GameConfig)
+  extends Actor
+    with ActorLogging
+    with UnhandledMessagesLogged {
   override val supervisorStrategy: SupervisorStrategy = RestartKilledSupervisionStrategy(super.supervisorStrategy).strategy
   private val environment: ActorRef = context.actorOf(Props[Environment])
 
@@ -63,7 +66,7 @@ class GameHost(gameConfig: GameConfig) extends Actor with ActorLogging {
   }
 
   private def makeChaosMonkey(): ActorRef = {
-    context.actorOf(Props[ChaosMonkey], ChaosMonkey.ActorName)
+    context.actorOf(ChaosMonkey.props(), ChaosMonkey.ActorName)
   }
 
   override def preStart(): Unit = {

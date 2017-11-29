@@ -8,32 +8,42 @@ import com.github.willb611.messages.Command
 import com.github.willb611.objects.TowerSpace.TowersInSpaceQuery
 
 import scala.concurrent.duration.{FiniteDuration, _}
+import scala.language.postfixOps
 import scala.util.Random
 
 object ChaosMonkey {
-  val ActorName: String = "chaosMonkey"
-
-  def props(random: Random): Props = Props(new ChaosMonkey(random))
+  // config
+  private final val DefaultIntervalToPollParentForVictims: FiniteDuration = 500 millis
+  private final val DefaultIntervalForChaos: FiniteDuration = 1000 millis
+  case class ChaosMonkeyConfig(intervalToSeekNewVictims: FiniteDuration, intervalForChaos: FiniteDuration)
+  final val defaultConfig: ChaosMonkeyConfig = {
+    ChaosMonkeyConfig(DefaultIntervalToPollParentForVictims, DefaultIntervalForChaos)
+  }
+  final val ActorName: String = "chaosMonkey"
+  // props
+  def props(random: Random, config: ChaosMonkeyConfig): Props = {
+    Props(new ChaosMonkey(random, config))
+  }
+  def props(random: Random): Props = Props(new ChaosMonkey(random, defaultConfig))
+  def props(): Props = props(new Random)
+  // timer stuff
   final case object ChaosTimerKey
-  final val IntervalForChaos: FiniteDuration = 1000 millis
   final case object QueryForVictimsTimerKey
-  private final val IntervalToSeekNewVictims: FiniteDuration = 500 millis
   // Messages
   final case object CauseChaos extends Command
   final case object QueryForVictims extends Command
 }
 
-class ChaosMonkey(random: Random)
+class ChaosMonkey(random: Random, config: ChaosMonkeyConfig)
   extends Actor
+    with Timers
     with ActorLogging
-    with Timers {
-  def this() = this(new Random())
+    with UnhandledMessagesLogged {
   var potentialVictims: Set[ActorRef] = Set()
 
-
   override def preStart(): Unit = {
-    timers.startPeriodicTimer(ChaosTimerKey, CauseChaos, IntervalForChaos)
-    timers.startPeriodicTimer(QueryForVictimsTimerKey, QueryForVictims, IntervalToSeekNewVictims)
+    timers.startPeriodicTimer(ChaosTimerKey, CauseChaos, config.intervalForChaos)
+    timers.startPeriodicTimer(QueryForVictimsTimerKey, QueryForVictims, config.intervalToSeekNewVictims)
     super.preStart()
   }
 

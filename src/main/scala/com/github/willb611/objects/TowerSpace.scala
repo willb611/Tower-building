@@ -4,7 +4,8 @@ import akka.actor.{Actor, ActorLogging, ActorRef, Props, SupervisorStrategy}
 import akka.pattern.ask
 import akka.util.Timeout
 import com.github.willb611.ColorCollectionHelper.{CountOfColors, countOfColorsFromOneColor}
-import com.github.willb611.{Color, RestartKilledSupervisionStrategy}
+import com.github.willb611.builders.BuilderCoordinator.TowerListAdvisory
+import com.github.willb611.{Color, RestartKilledSupervisionStrategy, UnhandledMessagesLogged}
 import com.github.willb611.messages.Query
 import com.github.willb611.objects.Environment.ActorJoinEnvironmentAdvisory
 import com.github.willb611.objects.Tower.CountCountQuery
@@ -23,7 +24,11 @@ object TowerSpace {
   final case object TowersInSpaceQuery extends Query
 }
 
-class TowerSpace(environment: ActorRef, towersToMake: Int) extends Actor with ActorLogging {  override val supervisorStrategy: SupervisorStrategy = RestartKilledSupervisionStrategy(super.supervisorStrategy).strategy
+class TowerSpace(environment: ActorRef, towersToMake: Int)
+  extends Actor
+    with ActorLogging
+    with UnhandledMessagesLogged {
+  override val supervisorStrategy: SupervisorStrategy = RestartKilledSupervisionStrategy(super.supervisorStrategy).strategy
   private val towers = ListBuffer[ActorRef]()
   private val timeoutWhenQueryingTowers: Timeout = Timeout(10 seconds)
   private val towerNameIterator = Iterator from 1 map (i => s"${Tower.ActorNamePrefix}-$i")
@@ -71,6 +76,6 @@ class TowerSpace(environment: ActorRef, towersToMake: Int) extends Actor with Ac
       log.info(s"[receive] Responding to $CountOfTowersWithColorQuery with $combinedCount")
       sender() ! combinedCount
     case TowersInSpaceQuery =>
-      sender() ! towers.toList
+      sender() ! TowerListAdvisory(towers.toList)
   }
 }

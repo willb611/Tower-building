@@ -14,7 +14,7 @@ object Builder {
   val ActorNamePrefix: String = "builder"
   // Messages
   final case class TowerToBuild(towerActor: ActorRef) extends Advisory
-  final case object TowerToBuildQuery extends Query
+  final case object TowerToBuildQuery extends Command
   final case object DoWork extends Command
   final case object TowerBeingBuiltQuery extends Query
 }
@@ -70,10 +70,5 @@ class Builder(val colorToUseForBlocks: Color) extends Actor
     case TowerBeingBuiltQuery =>
       log.debug(s"[receive] Responding to $TowerBeingBuiltQuery with $tower")
       sender() ! tower
-  }
-
-  override def unhandled(message: Any): Unit = {
-    log.info("[unhandled] Ignoring message: {}", message)
-    super.unhandled(message)
   }
 }
