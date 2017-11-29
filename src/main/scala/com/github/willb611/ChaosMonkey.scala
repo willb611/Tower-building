@@ -27,8 +27,8 @@ object ChaosMonkey {
   def props(random: Random): Props = Props(new ChaosMonkey(random, defaultConfig))
   def props(): Props = props(new Random)
   // timer stuff
-  final case object ChaosTimerKey
-  final case object QueryForVictimsTimerKey
+  private[willb611] final case object ChaosTimerKey
+  private[willb611] final case object QueryForVictimsTimerKey
   // Messages
   final case object CauseChaos extends Command
   final case object QueryForVictims extends Command

@@ -7,6 +7,7 @@ import com.github.willb611.objects.Environment.{ActorJoinEnvironmentAdvisory, Ap
 import com.github.willb611.objects.EnvironmentEffects.EnvironmentEffect
 
 import scala.concurrent.duration.{FiniteDuration, _}
+import scala.language.postfixOps
 import scala.util.Random
 
 object Environment {
@@ -17,7 +18,7 @@ object Environment {
   // Messages
   case class ActorJoinEnvironmentAdvisory(actor: ActorRef) extends Advisory
   case class ApplyEffectCommand(environmentEffect: EnvironmentEffect) extends Command
-  final case object ApplyEffectsToActors extends Command
+  private[objects] final case object ApplyEffectsToActors extends Command
 }
 
 class Environment(val random: Random, val effectInterval: FiniteDuration)

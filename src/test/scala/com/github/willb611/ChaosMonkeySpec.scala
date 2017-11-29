@@ -4,7 +4,7 @@ import akka.actor.ActorSystem
 import akka.testkit.{TestKit, TestProbe}
 import com.github.willb611.ChaosMonkey.{CauseChaos, ChaosMonkeyConfig, QueryForVictims}
 import com.github.willb611.GameHost.{BuilderCoordinatorsAdvisory, BuilderCoordinatorsQuery, TowerSpacesAdvisory, TowerSpacesQuery}
-import com.github.willb611.builders.BuilderCoordinator.{BuilderListAdvisory, BuildersBeingCoordinatedQuery, TowerListAdvisory}
+import com.github.willb611.builders.BuilderCoordinator.{BuildersBeingCoordinatedQuery, TowerListAdvisory}
 import com.github.willb611.helper.ActorRetrieverByPath
 import com.github.willb611.objects.TowerSpace.TowersInSpaceQuery
 import org.scalamock.scalatest.MockFactory

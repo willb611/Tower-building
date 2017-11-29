@@ -18,7 +18,7 @@ object GameHost {
   val ActorName: String = "gameHost"
   def props(gameConfig: GameConfig): Props = Props(new GameHost(gameConfig))
 
-        // Messages
+  // Messages
   case class WinningColorQuery(maxTimeout: Timeout) extends Query
   object TowerSpacesQuery extends Query
   object BuilderCoordinatorsQuery extends Query

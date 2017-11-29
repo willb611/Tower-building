@@ -23,7 +23,7 @@ object BuilderCoordinator {
   final case object BuildersBeingCoordinatedQuery extends Query
   final case class TowerListAdvisory(towers: List[ActorRef]) extends Advisory
   final case class BuilderListAdvisory(builders: List[ActorRef]) extends Advisory
-  protected final case object AskBuildersToWork extends Command
+  private final case object AskBuildersToWork extends Command
 }
 
 class BuilderCoordinator(buildersToCreate: Int, color: Color)

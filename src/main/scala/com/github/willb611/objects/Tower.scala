@@ -17,7 +17,7 @@ object Tower {
   private final case object TimerKey
   // Messages
   final case class AddBlockRequest(colorToUseForBlocks: Color) extends Request
-  final case object ProcessPendingBlocksCommand extends Command
+  private[willb611] final case object ProcessPendingBlocksCommand extends Command
 
   final case object CountCountQuery extends Query
   final case object HeightQuery extends Query
