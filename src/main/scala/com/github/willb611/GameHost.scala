@@ -7,7 +7,6 @@ import akka.pattern.ask
 import akka.util.Timeout
 import com.github.willb611.GameHost._
 import com.github.willb611.builders.BuilderCoordinator
-import com.github.willb611.builders.BuilderCoordinator.TowerSpaceAdvisory
 import ColorCollectionHelper.CountOfColors
 import com.github.willb611.messages.Query
 import com.github.willb611.objects.{Environment, TowerSpace}
@@ -40,34 +39,38 @@ class GameHost(gameConfig: GameConfig) extends Actor with ActorLogging {
 
   private var chaosMonkey: Option[ActorRef] = None
 
-  private def makeCoordinators(): Unit = {
+  private def makeCoordinators(): ListBuffer[ActorRef] = {
     var colors = Color.ansiColors
+    val result: ListBuffer[ActorRef] = ListBuffer()
     for (_ <- 0 until gameConfig.coordinatorCount) {
       if (colors.isEmpty) {
         colors = Color.ansiColors
       }
       val c = Color.randomColor(colors)
       colors = colors.filter(filtered => filtered != c)
-      coordinators += context.actorOf(BuilderCoordinator.props(gameConfig.buildersPerCoordinator, c), coordinatorNameIter.next())
+      result += context.actorOf(BuilderCoordinator.props(gameConfig.buildersPerCoordinator, c), coordinatorNameIter.next())
     }
+    result
   }
 
-  private def makeTowerSpaces(): Unit = {
+  private def makeTowerSpaces(): ListBuffer[ActorRef] = {
+    val result: ListBuffer[ActorRef] = ListBuffer()
     for (_ <- 0 until gameConfig.towerSpaceCount) {
       val towerSpace = context.actorOf(TowerSpace.props(environment, gameConfig.towersPerSpace), towerSpaceNameIter.next())
-      towerSpaces += towerSpace
+      result += towerSpace
     }
+    result
   }
 
-  def makeChaosMonkey() = {
-    chaosMonkey = Some(context.actorOf(Props[ChaosMonkey], ChaosMonkey.ActorName))
+  private def makeChaosMonkey(): ActorRef = {
+    context.actorOf(Props[ChaosMonkey], ChaosMonkey.ActorName)
   }
 
   override def preStart(): Unit = {
     log.info("[preStart] Setting up game.")
-    makeCoordinators()
-    makeTowerSpaces()
-    makeChaosMonkey()
+    coordinators ++= makeCoordinators()
+    towerSpaces ++= makeTowerSpaces()
+    chaosMonkey = Some(makeChaosMonkey())
     log.info("[preStart] Setup complete!")
     super.preStart()
   }

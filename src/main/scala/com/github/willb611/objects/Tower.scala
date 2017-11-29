@@ -113,7 +113,7 @@ class Tower(parent: Option[ActorRef])
     log.debug(s"[environmentEffect] Effected by $effect, height now ${height()}")
   }
 
-  def towerState: String = {
+  override def toString: String = {
     val prefix = s"[Tower]{h=${height()}"
     if (highestPercentColor().isDefined) {
       var result = prefix + s",colored=${highestPercentColor().get},blocks={"
@@ -125,7 +125,7 @@ class Tower(parent: Option[ActorRef])
     }
   }
 
-  def consoleOutputString(): String = { 
-     highestPercentColor().getOrElse(Color.RESET).ansiCode + toString + towerState + Color.RESET.ansiCode
+  def consoleOutputString(): String = {
+     highestPercentColor().getOrElse(Color.RESET).ansiCode + toString + toString + Color.RESET.ansiCode
   }
 }
