@@ -4,7 +4,7 @@ import akka.actor.{Actor, ActorLogging, ActorRef, Props, SupervisorStrategy}
 import akka.pattern.ask
 import akka.util.Timeout
 import com.github.willb611.ColorCollectionHelper.{CountOfColors, countOfColorsFromOneColor}
-import com.github.willb611.builders.BuilderCoordinator.TowerListAdvisory
+import com.github.willb611.builders.BuilderCoordinator.TowerListResponse
 import com.github.willb611.{Color, RestartKilledSupervisionStrategy, UnhandledMessagesLogged}
 import com.github.willb611.messages.Query
 import com.github.willb611.objects.Environment.ActorJoinEnvironmentAdvisory
@@ -76,6 +76,6 @@ class TowerSpace(environment: ActorRef, towersToMake: Int)
       log.info(s"[receive] Responding to $CountOfTowersWithColorQuery with $combinedCount")
       sender() ! combinedCount
     case TowersInSpaceQuery =>
-      sender() ! TowerListAdvisory(towers.toList)
+      sender() ! TowerListResponse(towers.toList)
   }
 }

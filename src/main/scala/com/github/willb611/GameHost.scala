@@ -8,7 +8,7 @@ import akka.util.Timeout
 import com.github.willb611.GameHost._
 import com.github.willb611.builders.BuilderCoordinator
 import ColorCollectionHelper.CountOfColors
-import com.github.willb611.messages.{Advisory, Query}
+import com.github.willb611.messages.{Response, Query}
 import com.github.willb611.objects.{Environment, TowerSpace}
 
 import scala.collection.mutable.ListBuffer
@@ -22,9 +22,9 @@ object GameHost {
   case class WinningColorQuery(maxTimeout: Timeout) extends Query
   object TowerSpacesQuery extends Query
   object BuilderCoordinatorsQuery extends Query
-  // Response
-  case class BuilderCoordinatorsAdvisory(coordinators: List[ActorRef]) extends Advisory
-  case class TowerSpacesAdvisory(towerSpaces: List[ActorRef]) extends Advisory
+  // Responses
+  case class BuilderCoordinatorsResponse(coordinators: List[ActorRef]) extends Response
+  case class TowerSpacesResponse(towerSpaces: List[ActorRef]) extends Response
 }
 
 class GameHost(gameConfig: GameConfig)
@@ -84,11 +84,11 @@ class GameHost(gameConfig: GameConfig)
       sender() ! currentlyWinningColor(winnerRequest.maxTimeout)
     // queries
     case TowerSpacesQuery =>
-      val response = TowerSpacesAdvisory(towerSpaces.toList)
+      val response = TowerSpacesResponse(towerSpaces.toList)
       log.debug(s"[receive] Responding to $TowerSpacesQuery with $response")
       sender() ! response
     case BuilderCoordinatorsQuery =>
-      sender() ! BuilderCoordinatorsAdvisory(coordinators.toList)
+      sender() ! BuilderCoordinatorsResponse(coordinators.toList)
   }
 
   def currentlyWinningColor(timeout: Timeout): Option[Color] = {

@@ -2,7 +2,7 @@ package com.github.willb611
 
 import akka.actor.{ActorRef, ActorSystem}
 import akka.testkit.{ImplicitSender, TestKit}
-import com.github.willb611.GameHost.{BuilderCoordinatorsAdvisory, TowerSpacesAdvisory}
+import com.github.willb611.GameHost.{BuilderCoordinatorsResponse, TowerSpacesResponse}
 import com.github.willb611.builders.Builder.TowerBeingBuiltQuery
 import com.github.willb611.builders.{Builder, BuilderCoordinator}
 import com.github.willb611.helper.ActorRetrieverByPath
@@ -44,9 +44,9 @@ class GameHostSpec(_system: ActorSystem) extends TestKit(_system)
     "respond to chaos monkey queries" in {
       val gameHost = system.actorOf(GameHost.props(GameConfig.ZeroValues))
       gameHost ! GameHost.BuilderCoordinatorsQuery
-      expectMsg(waitTime, BuilderCoordinatorsAdvisory(List()))
+      expectMsg(waitTime, BuilderCoordinatorsResponse(List()))
       gameHost ! GameHost.TowerSpacesQuery
-      expectMsg(waitTime, TowerSpacesAdvisory(List()))
+      expectMsg(waitTime, TowerSpacesResponse(List()))
     }
   }
 }

@@ -4,8 +4,8 @@ import akka.actor.{ActorRef, ActorSystem, Props}
 import akka.testkit.{ImplicitSender, TestKit, TestProbe}
 import com.github.willb611.builders.Builder.{TowerBeingBuiltQuery, TowerToBuild}
 import com.github.willb611.{Color, GameConfig, GameHost}
-import com.github.willb611.GameHost.{TowerSpacesAdvisory, TowerSpacesQuery}
-import com.github.willb611.builders.BuilderCoordinator.{BuilderListAdvisory, BuildersBeingCoordinatedQuery, TowerListAdvisory}
+import com.github.willb611.GameHost.{TowerSpacesResponse, TowerSpacesQuery}
+import com.github.willb611.builders.BuilderCoordinator.{BuilderListResponse, BuildersBeingCoordinatedQuery, TowerListResponse}
 import com.github.willb611.helper.ActorRetrieverByPath
 import com.github.willb611.objects.Tower
 import com.github.willb611.objects.Tower.AddBlockRequest
@@ -45,7 +45,7 @@ class BuilderCoordinatorSpec(_system: ActorSystem) extends TestKit(_system)
     "poll TowerSpace for towers" in {
       val testProbeAsTowerSpace = TestProbe()
       val coordinator = system.actorOf(BuilderCoordinator.props(0, Color.randomColor()))
-      coordinator ! TowerSpacesAdvisory(List(testProbeAsTowerSpace.ref))
+      coordinator ! TowerSpacesResponse(List(testProbeAsTowerSpace.ref))
       testProbeAsTowerSpace.expectMsg(waitTime, TowersInSpaceQuery)
     }
     "forward one tower from response, onto tower" in {
@@ -56,7 +56,7 @@ class BuilderCoordinatorSpec(_system: ActorSystem) extends TestKit(_system)
       logger.debug(s"Found child: $child")
       child ! TowerBeingBuiltQuery
       expectMsg(waitTime, None)
-      coordinator ! TowerListAdvisory(List(tower))
+      coordinator ! TowerListResponse(List(tower))
       Thread.sleep(waitTime.toMillis)
       child ! TowerBeingBuiltQuery
       expectMsg(waitTime, Some(tower))
@@ -71,7 +71,7 @@ class BuilderCoordinatorSpec(_system: ActorSystem) extends TestKit(_system)
       coordinator ! BuildersBeingCoordinatedQuery
       // Then
       val response: AnyRef = receiveOne(waitTime)
-      val responseAsAdvisory = response.asInstanceOf[BuilderListAdvisory]
+      val responseAsAdvisory = response.asInstanceOf[BuilderListResponse]
       assert(null != responseAsAdvisory)
       assert(num == responseAsAdvisory.builders.size)
     }

@@ -1,11 +1,11 @@
 package com.github.willb611.builders
 
 import akka.actor.{Actor, ActorLogging, ActorRef, Props, SupervisorStrategy, Timers}
-import com.github.willb611.GameHost.{TowerSpacesAdvisory, TowerSpacesQuery}
+import com.github.willb611.GameHost.{TowerSpacesQuery, TowerSpacesResponse}
 import com.github.willb611.{Color, RandomHelper, RestartKilledSupervisionStrategy, UnhandledMessagesLogged}
 import com.github.willb611.builders.Builder.{DoWork, TowerToBuild, TowerToBuildQuery}
 import com.github.willb611.builders.BuilderCoordinator._
-import com.github.willb611.messages.{Advisory, Command, Query}
+import com.github.willb611.messages.{Command, Query, Request, Response}
 import com.github.willb611.objects.TowerSpace.TowersInSpaceQuery
 
 import scala.collection.mutable.ListBuffer
@@ -21,9 +21,9 @@ object BuilderCoordinator {
 
   // Messages
   final case object BuildersBeingCoordinatedQuery extends Query
-  final case class TowerListAdvisory(towers: List[ActorRef]) extends Advisory
-  final case class BuilderListAdvisory(builders: List[ActorRef]) extends Advisory
-  private final case object AskBuildersToWork extends Command
+  final case class TowerListResponse(towers: List[ActorRef]) extends Response
+  final case class BuilderListResponse(builders: List[ActorRef]) extends Response
+  private final case object AskBuildersToWork extends Request
 }
 
 class BuilderCoordinator(buildersToCreate: Int, color: Color)
@@ -60,10 +60,10 @@ class BuilderCoordinator(buildersToCreate: Int, color: Color)
   }
 
   override def receive = {
-    case msg: TowerSpacesAdvisory =>
+    case msg: TowerSpacesResponse =>
       log.debug(s"[receive] got $msg")
       msg.towerSpaces.foreach(t => t ! TowersInSpaceQuery)
-    case towerListMsg: TowerListAdvisory =>
+    case towerListMsg: TowerListResponse =>
       log.debug(s"[receive] Got : $towerListMsg")
       towerListMsg.towers.foreach(ref => {
         towers = towers + ref
@@ -78,6 +78,6 @@ class BuilderCoordinator(buildersToCreate: Int, color: Color)
         updateBuilders()
       }
     case BuildersBeingCoordinatedQuery =>
-      sender() ! BuilderListAdvisory(builders.toList)
+      sender() ! BuilderListResponse(builders.toList)
   }
 }

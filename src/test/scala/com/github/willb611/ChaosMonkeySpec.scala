@@ -2,9 +2,9 @@ package com.github.willb611
 
 import akka.actor.ActorSystem
 import akka.testkit.{TestKit, TestProbe}
-import com.github.willb611.ChaosMonkey.{CauseChaos, ChaosMonkeyConfig, QueryForVictims}
-import com.github.willb611.GameHost.{BuilderCoordinatorsAdvisory, BuilderCoordinatorsQuery, TowerSpacesAdvisory, TowerSpacesQuery}
-import com.github.willb611.builders.BuilderCoordinator.{BuildersBeingCoordinatedQuery, TowerListAdvisory}
+import com.github.willb611.ChaosMonkey.{CauseChaos, ChaosMonkeyConfig, PollActorsForVictimsCommand}
+import com.github.willb611.GameHost.{BuilderCoordinatorsResponse, BuilderCoordinatorsQuery, TowerSpacesResponse, TowerSpacesQuery}
+import com.github.willb611.builders.BuilderCoordinator.{BuildersBeingCoordinatedQuery, TowerListResponse}
 import com.github.willb611.helper.ActorRetrieverByPath
 import com.github.willb611.objects.TowerSpace.TowersInSpaceQuery
 import org.scalamock.scalatest.MockFactory
@@ -37,7 +37,7 @@ class ChaosMonkeySpec(_system: ActorSystem) extends TestKit(_system)
       watcher.watch(victim)
       (randomMock.nextBoolean _).expects().returning(true).atLeastOnce()
       val monkey = system.actorOf(ChaosMonkey.props(randomMock))
-      monkey ! TowerListAdvisory(List(victim))
+      monkey ! TowerListResponse(List(victim))
       monkey ! CauseChaos
       // Then
       watcher.expectTerminated(victim, waitTime)
@@ -51,7 +51,7 @@ class ChaosMonkeySpec(_system: ActorSystem) extends TestKit(_system)
       (randomMock.nextBoolean _).expects().returning(true).atLeastOnce()
       // When
       val monkey = system.actorOf(ChaosMonkey.props(randomMock, shortDurationConfig))
-      monkey ! TowerListAdvisory(List(victim))
+      monkey ! TowerListResponse(List(victim))
       // Then
       watcher.expectTerminated(victim, waitTime)
     }
@@ -64,7 +64,7 @@ class ChaosMonkeySpec(_system: ActorSystem) extends TestKit(_system)
       (ignoreAllRandom.nextBoolean _).expects().returning(false).anyNumberOfTimes()
       val parent = TestProbe()
       val monkey = parent.childActorOf(ChaosMonkey.props(ignoreAllRandom))
-      monkey ! QueryForVictims
+      monkey ! PollActorsForVictimsCommand
       parent.expectMsg(waitTime, TowerSpacesQuery)
       parent.expectMsg(waitTime, BuilderCoordinatorsQuery)
     }
@@ -75,7 +75,7 @@ class ChaosMonkeySpec(_system: ActorSystem) extends TestKit(_system)
       val towerSpace = TestProbe()
       val monkey = system.actorOf(ChaosMonkey.props(ignoreAllRandom, shortDurationConfig))
       // When
-      monkey ! TowerSpacesAdvisory(List(towerSpace.ref))
+      monkey ! TowerSpacesResponse(List(towerSpace.ref))
       // Then
       towerSpace.expectMsg(waitTime, TowersInSpaceQuery)
     }
@@ -86,7 +86,7 @@ class ChaosMonkeySpec(_system: ActorSystem) extends TestKit(_system)
       val coordinator = TestProbe()
       val monkey = system.actorOf(ChaosMonkey.props(ignoreAllRandom, shortDurationConfig))
       // When
-      monkey ! BuilderCoordinatorsAdvisory(List(coordinator.ref))
+      monkey ! BuilderCoordinatorsResponse(List(coordinator.ref))
       // Then
       coordinator.expectMsg(waitTime, BuildersBeingCoordinatedQuery)
     }

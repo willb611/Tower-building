@@ -2,8 +2,8 @@ package com.github.willb611
 
 import akka.actor.{Actor, ActorLogging, ActorRef, Kill, Props, Timers}
 import com.github.willb611.ChaosMonkey._
-import com.github.willb611.GameHost.{BuilderCoordinatorsAdvisory, BuilderCoordinatorsQuery, TowerSpacesAdvisory, TowerSpacesQuery}
-import com.github.willb611.builders.BuilderCoordinator.{BuilderListAdvisory, BuildersBeingCoordinatedQuery, TowerListAdvisory}
+import com.github.willb611.GameHost.{BuilderCoordinatorsResponse, BuilderCoordinatorsQuery, TowerSpacesResponse, TowerSpacesQuery}
+import com.github.willb611.builders.BuilderCoordinator.{BuilderListResponse, BuildersBeingCoordinatedQuery, TowerListResponse}
 import com.github.willb611.messages.Command
 import com.github.willb611.objects.TowerSpace.TowersInSpaceQuery
 
@@ -28,10 +28,10 @@ object ChaosMonkey {
   def props(): Props = props(new Random)
   // timer stuff
   private[willb611] final case object ChaosTimerKey
-  private[willb611] final case object QueryForVictimsTimerKey
+  private[willb611] final case object PollActorsForVictimsTimerKey
   // Messages
   final case object CauseChaos extends Command
-  final case object QueryForVictims extends Command
+  final case object PollActorsForVictimsCommand extends Command
 }
 
 class ChaosMonkey(random: Random, config: ChaosMonkeyConfig)
@@ -47,7 +47,7 @@ class ChaosMonkey(random: Random, config: ChaosMonkeyConfig)
 
   override def preStart(): Unit = {
     timers.startPeriodicTimer(ChaosTimerKey, CauseChaos, config.intervalForChaos)
-    timers.startPeriodicTimer(QueryForVictimsTimerKey, QueryForVictims, config.intervalToSeekNewVictims)
+    timers.startPeriodicTimer(PollActorsForVictimsTimerKey, PollActorsForVictimsCommand, config.intervalToSeekNewVictims)
     super.preStart()
   }
 
@@ -74,7 +74,7 @@ class ChaosMonkey(random: Random, config: ChaosMonkeyConfig)
   }
 
   override def receive = {
-    case QueryForVictims =>
+    case PollActorsForVictimsCommand =>
       context.parent ! TowerSpacesQuery
       context.parent ! BuilderCoordinatorsQuery
       towerSpaces.foreach(ts => ts ! TowersInSpaceQuery)
@@ -87,20 +87,20 @@ class ChaosMonkey(random: Random, config: ChaosMonkeyConfig)
           log.debug("[receive] Lucky this time..")
       }
     // Tower advisories
-    case msg: TowerSpacesAdvisory =>
+    case msg: TowerSpacesResponse =>
       log.debug(s"[receive] Got $msg")
       addPotentialVictims(msg.towerSpaces)
       towerSpaces ++= msg.towerSpaces
-    case msg: TowerListAdvisory =>
+    case msg: TowerListResponse =>
       log.debug(s"[receive] Got $msg")
       addPotentialVictims(msg.towers)
       towers ++= msg.towers
     // Builder advisories
-    case msg: BuilderCoordinatorsAdvisory =>
+    case msg: BuilderCoordinatorsResponse =>
       log.debug(s"[receive] Got $msg")
       addPotentialVictims(msg.coordinators)
       coordinators ++= msg.coordinators
-    case msg: BuilderListAdvisory =>
+    case msg: BuilderListResponse =>
       log.debug(s"[receive] Got $msg")
       addPotentialVictims(msg.builders)
       builders ++= msg.builders
