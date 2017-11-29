@@ -5,6 +5,7 @@ import akka.testkit.{ImplicitSender, TestKit, TestProbe}
 import com.github.willb611.builders.Builder.{TowerBeingBuiltQuery, TowerToBuild}
 import com.github.willb611.Color
 import com.github.willb611.GameHost.TowerSpacesAdvisory
+import com.github.willb611.builders.BuilderCoordinator.TowerListAdvisory
 import com.github.willb611.helper.ActorRetrieverByPath
 import com.github.willb611.objects.Tower
 import com.github.willb611.objects.Tower.AddBlockRequest
@@ -55,7 +56,7 @@ class BuilderCoordinatorSpec(_system: ActorSystem) extends TestKit(_system)
       logger.debug(s"Found child: $child")
       child ! TowerBeingBuiltQuery
       expectMsg(waitTime, None)
-      coordinator ! List(tower)
+      coordinator ! TowerListAdvisory(List(tower))
       Thread.sleep(waitTime.toMillis)
       child ! TowerBeingBuiltQuery
       expectMsg(waitTime, Some(tower))

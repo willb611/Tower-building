@@ -59,9 +59,9 @@ class BuilderCoordinator(buildersToCreate: Int, color: Color)
     case msg: TowerSpacesAdvisory =>
       log.debug(s"[receive] got $msg")
       msg.towerSpaces.foreach(t => t ! TowersInSpaceQuery)
-    case list: List[ActorRef] =>
-      log.debug(s"[receive] Got towers: $list")
-      list.foreach(ref => {
+    case towerListMsg: TowerListAdvisory =>
+      log.debug(s"[receive] Got : $towerListMsg")
+      towerListMsg.towers.foreach(ref => {
         towers = towers + ref
       })
       updateBuilders()
