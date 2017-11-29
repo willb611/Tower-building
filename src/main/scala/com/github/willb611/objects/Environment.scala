@@ -18,7 +18,7 @@ object Environment {
   // Messages
   case class ActorJoinEnvironmentAdvisory(actor: ActorRef) extends Advisory
   case class ApplyEffectCommand(environmentEffect: EnvironmentEffect) extends Command
-  private[objects] final case object ApplyEffectsToActors extends Command
+  private[willb611] final case object ApplyEffectsToActors extends Command
 }
 
 class Environment(val random: Random, val effectInterval: FiniteDuration)

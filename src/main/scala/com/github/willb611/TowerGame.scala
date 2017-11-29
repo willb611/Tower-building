@@ -18,10 +18,10 @@ object TowerGame
   val actorSystem: ActorSystem = ActorSystem("TowerGame")
   val configProps = GameHost.props(GameConfig.Default)
   val gameHost: ActorRef = actorSystem.actorOf(configProps, GameHost.ActorName)
-  Thread.sleep(sleepTime)
-  logCurrentWinner(gameHost)
-  actorSystem.terminate()
-  // main
+  while (true) {
+    Thread.sleep(sleepTime)
+    logCurrentWinner(gameHost)
+  }
 
   def requestCurrentWinner(gameHost: ActorRef, query: WinningColorQuery): Option[Color] = {
     try {
