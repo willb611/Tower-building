@@ -5,6 +5,7 @@ import akka.actor.SupervisorStrategy._
 import com.typesafe.scalalogging.LazyLogging
 
 import scala.concurrent.duration._
+import scala.language.postfixOps
 
 case class RestartKilledSupervisionStrategy(superSupervisionStrategy: SupervisorStrategy)
   extends LazyLogging {

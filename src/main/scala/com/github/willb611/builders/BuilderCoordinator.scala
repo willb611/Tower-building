@@ -77,5 +77,7 @@ class BuilderCoordinator(buildersToCreate: Int, color: Color)
       if (towers.nonEmpty) {
         updateBuilders()
       }
+    case BuildersBeingCoordinatedQuery =>
+      sender() ! BuilderListAdvisory(builders.toList)
   }
 }

@@ -3,7 +3,7 @@ package com.github.willb611
 import akka.actor.{Actor, ActorLogging, ActorRef, Kill, Props, Timers}
 import com.github.willb611.ChaosMonkey._
 import com.github.willb611.GameHost.{BuilderCoordinatorsAdvisory, BuilderCoordinatorsQuery, TowerSpacesAdvisory, TowerSpacesQuery}
-import com.github.willb611.builders.BuilderCoordinator.TowerListAdvisory
+import com.github.willb611.builders.BuilderCoordinator.{BuilderListAdvisory, BuildersBeingCoordinatedQuery, TowerListAdvisory}
 import com.github.willb611.messages.Command
 import com.github.willb611.objects.TowerSpace.TowersInSpaceQuery
 
@@ -39,7 +39,11 @@ class ChaosMonkey(random: Random, config: ChaosMonkeyConfig)
     with Timers
     with ActorLogging
     with UnhandledMessagesLogged {
-  var potentialVictims: Set[ActorRef] = Set()
+  private var potentialVictims: Set[ActorRef] = Set()
+  private var towerSpaces: Set[ActorRef] = Set()
+  private var towers: Set[ActorRef] = Set()
+  private var coordinators: Set[ActorRef] = Set()
+  private var builders: Set[ActorRef] = Set()
 
   override def preStart(): Unit = {
     timers.startPeriodicTimer(ChaosTimerKey, CauseChaos, config.intervalForChaos)
@@ -73,6 +77,8 @@ class ChaosMonkey(random: Random, config: ChaosMonkeyConfig)
     case QueryForVictims =>
       context.parent ! TowerSpacesQuery
       context.parent ! BuilderCoordinatorsQuery
+      towerSpaces.foreach(ts => ts ! TowersInSpaceQuery)
+      coordinators.foreach(bc => bc ! BuildersBeingCoordinatedQuery)
     case CauseChaos =>
       if (shouldCauseChaos()) {
           log.debug("[receive] Causing chaos..")
@@ -80,17 +86,23 @@ class ChaosMonkey(random: Random, config: ChaosMonkeyConfig)
       } else {
           log.debug("[receive] Lucky this time..")
       }
-    // Towers
+    // Tower advisories
     case msg: TowerSpacesAdvisory =>
+      log.debug(s"[receive] Got $msg")
       addPotentialVictims(msg.towerSpaces)
-      sender() ! TowersInSpaceQuery
+      towerSpaces ++= msg.towerSpaces
     case msg: TowerListAdvisory =>
+      log.debug(s"[receive] Got $msg")
       addPotentialVictims(msg.towers)
-    // Builders
+      towers ++= msg.towers
+    // Builder advisories
     case msg: BuilderCoordinatorsAdvisory =>
+      log.debug(s"[receive] Got $msg")
       addPotentialVictims(msg.coordinators)
-//      sender() ! BuildersQuery
-//    case BuildersAdvisory =>
-//      log.info("TODO")
+      coordinators ++= msg.coordinators
+    case msg: BuilderListAdvisory =>
+      log.debug(s"[receive] Got $msg")
+      addPotentialVictims(msg.builders)
+      builders ++= msg.builders
   }
 }

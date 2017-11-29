@@ -1,22 +1,21 @@
 package com.github.willb611
 
 import akka.actor.ActorSystem
-import akka.testkit.{ImplicitSender, TestKit, TestProbe}
+import akka.testkit.{TestKit, TestProbe}
 import com.github.willb611.ChaosMonkey.{CauseChaos, ChaosMonkeyConfig, QueryForVictims}
 import com.github.willb611.GameHost.{BuilderCoordinatorsAdvisory, BuilderCoordinatorsQuery, TowerSpacesAdvisory, TowerSpacesQuery}
-import com.github.willb611.builders.BuilderCoordinator.{BuilderListAdvisory, TowerListAdvisory}
+import com.github.willb611.builders.BuilderCoordinator.{BuilderListAdvisory, BuildersBeingCoordinatedQuery, TowerListAdvisory}
 import com.github.willb611.helper.ActorRetrieverByPath
 import com.github.willb611.objects.TowerSpace.TowersInSpaceQuery
 import org.scalamock.scalatest.MockFactory
-import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
+import org.scalatest.{BeforeAndAfterAll, WordSpecLike}
 
 import scala.concurrent.duration._
+import scala.language.postfixOps
 import scala.util.Random
 
 class ChaosMonkeySpec(_system: ActorSystem) extends TestKit(_system)
-  with Matchers
   with WordSpecLike
-  with ImplicitSender
   with BeforeAndAfterAll
   with MockFactory
   with ActorRetrieverByPath {
@@ -58,29 +57,38 @@ class ChaosMonkeySpec(_system: ActorSystem) extends TestKit(_system)
     }
   }
 
-  "A chaosMonkey" should {
+  "A non-violent chaosMonkey" should {
     "poll parent for victims" in {
+      val ignoreAllRandom: Random = mock[Random]
+      logger.info(s"Found random: $ignoreAllRandom")
+      (ignoreAllRandom.nextBoolean _).expects().returning(false).anyNumberOfTimes()
       val parent = TestProbe()
-      val monkey = parent.childActorOf(ChaosMonkey.props(new Random))
+      val monkey = parent.childActorOf(ChaosMonkey.props(ignoreAllRandom))
       monkey ! QueryForVictims
       parent.expectMsg(waitTime, TowerSpacesQuery)
       parent.expectMsg(waitTime, BuilderCoordinatorsQuery)
     }
     "poll towerSpace's for towers" in {
+      val ignoreAllRandom: Random = mock[Random]
+      logger.info(s"Found random: $ignoreAllRandom")
+      (ignoreAllRandom.nextBoolean _).expects().returning(false).anyNumberOfTimes()
       val towerSpace = TestProbe()
-      val monkey = system.actorOf(ChaosMonkey.props(new Random, shortDurationConfig))
+      val monkey = system.actorOf(ChaosMonkey.props(ignoreAllRandom, shortDurationConfig))
       // When
       monkey ! TowerSpacesAdvisory(List(towerSpace.ref))
       // Then
-      towerSpace.expectMsg(waitTime, TowerSpacesQuery)
+      towerSpace.expectMsg(waitTime, TowersInSpaceQuery)
     }
     "poll BuilderCoordinator for builders" in {
+      val ignoreAllRandom: Random = mock[Random]
+      logger.info(s"Found random: $ignoreAllRandom")
+      (ignoreAllRandom.nextBoolean _).expects().returning(false).anyNumberOfTimes()
       val coordinator = TestProbe()
-      val monkey = system.actorOf(ChaosMonkey.props(new Random, shortDurationConfig))
+      val monkey = system.actorOf(ChaosMonkey.props(ignoreAllRandom, shortDurationConfig))
       // When
       monkey ! BuilderCoordinatorsAdvisory(List(coordinator.ref))
       // Then
-      coordinator.expectMsgClass(waitTime, BuilderListAdvisory.getClass)
+      coordinator.expectMsg(waitTime, BuildersBeingCoordinatedQuery)
     }
   }
 }

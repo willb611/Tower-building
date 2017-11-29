@@ -74,7 +74,6 @@ class BuilderCoordinatorSpec(_system: ActorSystem) extends TestKit(_system)
       val responseAsAdvisory = response.asInstanceOf[BuilderListAdvisory]
       assert(null != responseAsAdvisory)
       assert(num == responseAsAdvisory.builders.size)
-//      val expected = firstChildFromParentInSystem(dummyParent, system, Builder.ActorNamePrefix)
     }
   }
 }

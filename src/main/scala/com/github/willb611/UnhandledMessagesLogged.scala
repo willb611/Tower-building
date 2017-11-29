@@ -6,7 +6,7 @@ trait UnhandledMessagesLogged
   extends Actor
     with ActorLogging {
   override def unhandled(message: Any): Unit = {
-    log.warning(s"[unhandled] Given unexpected message: $message")
+    log.warning(s"[unhandled] From sender: ${sender()}, unexpected message: $message")
     super.unhandled(message)
   }
 }
