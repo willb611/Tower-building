@@ -1,17 +1,17 @@
 package com.github.willb611.helper
 
 import akka.actor.{ActorIdentity, ActorRef, ActorSystem, Identify}
-import akka.testkit.{TestKit, TestProbe}
+import akka.testkit.TestProbe
 import com.typesafe.scalalogging.LazyLogging
 
 import scala.concurrent.duration._
 import scala.language.postfixOps
 
-trait ActorRetrieverByPath extends TestKit with LazyLogging {
-  implicit val waitTime: FiniteDuration = 50 milliseconds
+trait ActorRetrieverByPath extends LazyLogging {
+  implicit val waitTime: FiniteDuration = 250 milliseconds
 
   def firstChildFromParentInSystem(parent: ActorRef, sys: ActorSystem, childPrefix: String): ActorRef = {
-    val probe = TestProbe()
+    val probe = TestProbe()(sys)
     for (i: Int <- 0 until 5) {
       val path = parent.path./(s"$childPrefix-$i")
       try {

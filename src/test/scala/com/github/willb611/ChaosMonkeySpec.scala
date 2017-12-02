@@ -14,12 +14,11 @@ import scala.concurrent.duration._
 import scala.language.postfixOps
 import scala.util.Random
 
-class ChaosMonkeySpec(_system: ActorSystem) extends TestKit(_system)
+class ChaosMonkeySpec extends TestKit(ActorSystem("ChaosMonkeySpec"))
   with WordSpecLike
   with BeforeAndAfterAll
   with MockFactory
   with ActorRetrieverByPath {
-  def this() = this(ActorSystem("ChaosMonkeySpec"))
   override def afterAll: Unit = {
     TestKit.shutdownActorSystem(system)
   }

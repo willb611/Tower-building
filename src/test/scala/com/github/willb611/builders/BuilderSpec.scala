@@ -10,16 +10,14 @@ import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
 
 import scala.concurrent.duration._
 
-class BuilderSpec(_system: ActorSystem) extends TestKit(_system)
+class BuilderSpec extends TestKit(ActorSystem("BuilderSpec"))
   with Matchers
   with WordSpecLike
   with BeforeAndAfterAll {
-
-  def this() = this(ActorSystem("BuilderSpec"))
   override def afterAll: Unit = {
     TestKit.shutdownActorSystem(system)
   }
-  val waitTime: FiniteDuration = 20 milliseconds
+  val waitTime: FiniteDuration = 250 milliseconds
 
   "A builder given a tower" should {
     "adds blocks of the right color" in {

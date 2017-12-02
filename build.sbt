@@ -7,6 +7,8 @@ scalaVersion := "2.12.4"
 
 val akkaVersion = "2.5.6"
 
+concurrentRestrictions in Global += Tags.limit(Tags.Test, 1)
+
 libraryDependencies ++= Seq(
  "com.typesafe.scala-logging" %% "scala-logging" % "3.7.2",
 

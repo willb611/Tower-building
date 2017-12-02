@@ -9,6 +9,7 @@ import com.github.willb611.objects.Tower._
 import com.github.willb611.{Color, ColorCollectionHelper, UnhandledMessagesLogged}
 
 import scala.concurrent.duration.{FiniteDuration, _}
+import scala.language.postfixOps
 
 object Tower {
   def props(parent: ActorRef): Props = Props(new Tower(Some(parent)))

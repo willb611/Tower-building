@@ -12,6 +12,7 @@ import com.github.willb611.Color
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
 
 import scala.concurrent.duration.{FiniteDuration, _}
+import scala.language.postfixOps
 
 class TowerSpec(_system: ActorSystem) extends TestKit(_system)
   with Matchers
@@ -22,7 +23,7 @@ class TowerSpec(_system: ActorSystem) extends TestKit(_system)
   override def afterAll: Unit = {
     TestKit.shutdownActorSystem(system)
   }
-  val waitTime: FiniteDuration = 20 milliseconds
+  val waitTime: FiniteDuration = 50 milliseconds
 
   "A tower given a block" should {
     "increase in height after receiving processPendingBlocks message" in {
