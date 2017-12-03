@@ -92,21 +92,6 @@ class TowerSpec(_system: ActorSystem) extends TestKit(_system)
 
 
   "A tower given multiple blocks" should {
-    "Not add any until it's told to, then only add 1" in {
-      val tower = system.actorOf(Props[Tower])
-      val b1 = system.actorOf(Builder.props(Color.GREEN))
-      b1 ! TowerToBuild(tower)
-      b1 ! DoWork
-      val b2 = system.actorOf(Builder.props(Color.GREEN))
-      b2 ! TowerToBuild(tower)
-      b2 ! DoWork
-      Thread.sleep(100)
-      tower ! HeightQuery
-      expectMsg(waitTime, 0)
-      tower ! ProcessPendingBlocksCommand
-      tower ! HeightQuery
-      expectMsg(waitTime, 1)
-    }
     "Add blocks over time according to some timer" in {
       val tower = system.actorOf(Props[Tower])
       tower ! HeightQuery
