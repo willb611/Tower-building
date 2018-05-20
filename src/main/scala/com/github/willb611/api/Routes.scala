@@ -9,7 +9,9 @@ trait Routes {
   implicit val gameService: GameService
 
   private val helloWorldRoute: Route = (get & path("")) {
-    complete(HttpEntity("Hello world!"))
+    complete(
+      HttpEntity("Hello world!")
+    )
   }
 
   private val currentWinnerRoute: Route = (get & path("game")) {

@@ -12,7 +12,8 @@ import scala.concurrent.ExecutionContextExecutor
 
 class ApiServer(actorSystem: ActorSystem)
   extends LazyLogging
-  with Routes {
+  with Routes
+  with CorsSupport {
 
   val host = "localhost"
   val port: Int = 8080
@@ -29,7 +30,7 @@ class ApiServer(actorSystem: ActorSystem)
       logRequestResult(LoggingMagnet(_ => RequestLogging.logRequestResult)) &
         handleRejections(RejectionHandler.default)
 
-    val loggingRoutes = requestLogging { serverRoutes }
+    val loggingRoutes = requestLogging { corsHandler(serverRoutes) }
 
     Http().bindAndHandle(loggingRoutes, host, port)
     logger.info(s"[start] Bound routes leaving method")
