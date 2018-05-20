@@ -28,9 +28,3 @@ libraryDependencies ++= Seq(
  "com.typesafe.akka" %% "akka-http-spray-json" % akkaHttpVersion,
  "com.typesafe.akka" %% "akka-http-testkit"   % akkaHttpVersion % "test"
 )
-
-//assemblyMergeStrategy in assembly := {
-// //  case PathList("META-INF", xs @ _*) => MergeStrategy.discard
-// case "reference.conf" => "MergeStrategy.concat"
-// case x => MergeStrategy.first
-//}

@@ -2,17 +2,17 @@ package com.github.willb611.api
 
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
-import akka.http.scaladsl.model.HttpEntity
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.RejectionHandler
 import akka.http.scaladsl.server.directives.LoggingMagnet
 import akka.stream.{ActorMaterializer, Materializer}
 import com.typesafe.scalalogging.LazyLogging
 
-import scala.concurrent.{ExecutionContextExecutor, Future}
+import scala.concurrent.ExecutionContextExecutor
 
 class ApiServer(actorSystem: ActorSystem)
-  extends LazyLogging {
+  extends LazyLogging
+  with HelloWorldRoute {
   val host = "localhost"
   val port: Int = 8080
   implicit val system: ActorSystem = actorSystem
@@ -27,15 +27,7 @@ class ApiServer(actorSystem: ActorSystem)
       logRequestResult(LoggingMagnet(_ => RequestLogging.logRequestResult)) &
         handleRejections(RejectionHandler.default)
 
-    val routes = (get & path("")) {
-
-//      val routes = (get & path("echo" / Segment)) {
-        //  s =>
-      //      val f = Future.successful(s)
-      //      complete(f)
-      complete(HttpEntity("Hello"))
-    }
-
+    val routes = helloWorldRoute
     val loggingRoutes = requestLogging { routes }
 
     Http().bindAndHandle(loggingRoutes, host, port)
