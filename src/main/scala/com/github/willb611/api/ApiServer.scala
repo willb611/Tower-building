@@ -27,7 +27,7 @@ class ApiServer(actorSystem: ActorSystem)
       logRequestResult(LoggingMagnet(_ => RequestLogging.logRequestResult)) &
         handleRejections(RejectionHandler.default)
 
-    val routes = (get & path("/")) {
+    val routes = (get & path("")) {
 
 //      val routes = (get & path("echo" / Segment)) {
         //  s =>
