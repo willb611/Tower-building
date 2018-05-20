@@ -35,9 +35,9 @@ class TowerSpace(environment: ActorRef, towersToMake: Int)
 
   override def preStart(): Unit = {
     for (_ <- 0 until towersToMake) {
-      val t = context.actorOf(Props[Tower], towerNameIterator.next())
-      environment ! ActorJoinEnvironmentAdvisory(t)
-      towers += t
+      val tower = context.actorOf(Props[Tower], towerNameIterator.next())
+      environment ! ActorJoinEnvironmentAdvisory(tower)
+      towers += tower
     }
   }
 
