@@ -16,12 +16,13 @@ class ApiServer(actorSystem: ActorSystem)
 
   val host = "localhost"
   val port: Int = 8080
+  override implicit val gameService: GameService = new GameService
   implicit val system: ActorSystem = actorSystem
   implicit val materializer: Materializer = ActorMaterializer()
   implicit def executor: ExecutionContextExecutor = system.dispatcher
 
   def start() = {
-    logger.info(s"[start] Starting ApiServer on interface $host at $port, try http://$host:$port")
+    logger.info(s"[start] Starting ApiServer on http://$host:$port")
     println("println - [start] setting up ApiServer")
 
     val requestLogging =

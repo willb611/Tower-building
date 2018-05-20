@@ -30,13 +30,13 @@ object TowerGame
   def requestCurrentWinner() : Option[Color] = {
     requestCurrentWinner(gameHost)
   }
-  def requestCurrentWinner(gameHost: ActorRef) : Option[Color] = {
+  private def requestCurrentWinner(gameHost: ActorRef) : Option[Color] = {
     val timeout = Timeout(1 minute)
     val query: WinningColorQuery = WinningColorQuery(timeout)
     requestCurrentWinner(gameHost, query)
   }
 
-  def requestCurrentWinner(gameHost: ActorRef, query: WinningColorQuery): Option[Color] = {
+  private def requestCurrentWinner(gameHost: ActorRef, query: WinningColorQuery): Option[Color] = {
     try {
       val timeout = query.maxTimeout
       logger.debug("[logCurrentWinner] Using gameHost: {}, timeout: {}, query: {}", gameHost, timeout, query)

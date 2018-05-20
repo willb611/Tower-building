@@ -14,6 +14,7 @@ import com.github.willb611.objects.TowerSpace.{CountOfTowersWithColorQuery, Towe
 import scala.collection.mutable.ListBuffer
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
+import scala.language.postfixOps
 
 object TowerSpace {
   val ActorNamePrefix: String = "towerSpace"
