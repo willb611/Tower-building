@@ -4,6 +4,7 @@ import akka.actor.{ActorRef, ActorSystem}
 import akka.pattern.ask
 import akka.util.Timeout
 import com.github.willb611.GameHost.WinningColorQuery
+import com.github.willb611.api.ApiServer
 import com.typesafe.scalalogging.LazyLogging
 
 import scala.concurrent.duration._
@@ -18,6 +19,8 @@ object TowerGame
   val actorSystem: ActorSystem = ActorSystem("TowerGame")
   val configProps = GameHost.props(GameConfig.Default)
   val gameHost: ActorRef = actorSystem.actorOf(configProps, GameHost.ActorName)
+  val server: ApiServer = new ApiServer(actorSystem)
+  server.start()
   while (true) {
     Thread.sleep(sleepTime)
     logCurrentWinner(gameHost)
