@@ -9,6 +9,7 @@ import com.typesafe.scalalogging.LazyLogging
 
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
+import scala.language.postfixOps
 
 object TowerGame
   extends App
@@ -16,14 +17,23 @@ object TowerGame
   final private val sleepTime = 10000
   // main
   logger.info("[main] Hello world")
-  val actorSystem: ActorSystem = ActorSystem("TowerGame")
-  val configProps = GameHost.props(GameConfig.Default)
-  val gameHost: ActorRef = actorSystem.actorOf(configProps, GameHost.ActorName)
-  val server: ApiServer = new ApiServer(actorSystem)
+  private val actorSystem: ActorSystem = ActorSystem("TowerGame")
+  private val configProps = GameHost.props(GameConfig.Default)
+  private val gameHost: ActorRef = actorSystem.actorOf(configProps, GameHost.ActorName)
+  private val server: ApiServer = new ApiServer(actorSystem)
   server.start()
   while (true) {
     Thread.sleep(sleepTime)
     logCurrentWinner(gameHost)
+  }
+
+  def requestCurrentWinner() : Option[Color] = {
+    requestCurrentWinner(gameHost)
+  }
+  def requestCurrentWinner(gameHost: ActorRef) : Option[Color] = {
+    val timeout = Timeout(1 minute)
+    val query: WinningColorQuery = WinningColorQuery(timeout)
+    requestCurrentWinner(gameHost, query)
   }
 
   def requestCurrentWinner(gameHost: ActorRef, query: WinningColorQuery): Option[Color] = {
@@ -42,9 +52,7 @@ object TowerGame
   }
 
   private def logCurrentWinner(gameHost: ActorRef): Unit = {
-    val timeout = Timeout(1 minute)
-    val query: WinningColorQuery = WinningColorQuery(timeout)
-    val resultOption = requestCurrentWinner(gameHost, query)
+    val resultOption = requestCurrentWinner(gameHost)
     if (resultOption.isDefined) {
       val result = resultOption.get
       logger.info(s"${result.ansiCode}[logCurrentWinner] Got winning color as: $result${Color.RESET.ansiCode}")

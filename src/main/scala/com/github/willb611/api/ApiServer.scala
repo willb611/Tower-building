@@ -12,7 +12,8 @@ import scala.concurrent.ExecutionContextExecutor
 
 class ApiServer(actorSystem: ActorSystem)
   extends LazyLogging
-  with HelloWorldRoute {
+  with Routes {
+
   val host = "localhost"
   val port: Int = 8080
   implicit val system: ActorSystem = actorSystem
@@ -27,11 +28,10 @@ class ApiServer(actorSystem: ActorSystem)
       logRequestResult(LoggingMagnet(_ => RequestLogging.logRequestResult)) &
         handleRejections(RejectionHandler.default)
 
-    val routes = helloWorldRoute
-    val loggingRoutes = requestLogging { routes }
+    val loggingRoutes = requestLogging { serverRoutes }
 
     Http().bindAndHandle(loggingRoutes, host, port)
-    logger.info(s"[start] Bound routes $routes with logging: $loggingRoutes.. leaving method")
+    logger.info(s"[start] Bound routes leaving method")
     logger.info("println - [start] Bound routes.. leaving method")
   }
 }
