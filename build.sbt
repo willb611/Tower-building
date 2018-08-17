@@ -6,7 +6,7 @@ version := "0.1"
 scalaVersion := "2.12.6"
 
 val akkaVersion = "2.5.12"
-val akkaHttpVersion = "10.0.13"
+val akkaHttpVersion = "10.1.3"
 // https://doc.akka.io/docs/akka-http/10.0.13/compatibility-guidelines.html#specific-versions-inter-op-discussion
 
 concurrentRestrictions in Global += Tags.limit(Tags.Test, 1)
