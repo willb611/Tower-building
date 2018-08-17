@@ -12,4 +12,10 @@ class GameService
     logger.debug(s"[getWinningColor] Returning $resultString")
     resultString
   }
+
+  def getGameState: String = {
+    val state = TowerGame.getGameStateSnapshot()
+    logger.debug(s"[getGameState] Returning ${state.toString}")
+    state.toString
+  }
 }

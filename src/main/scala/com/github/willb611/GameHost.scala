@@ -8,18 +8,19 @@ import akka.util.Timeout
 import com.github.willb611.GameHost._
 import com.github.willb611.builders.BuilderCoordinator
 import ColorCollectionHelper.CountOfColors
-import com.github.willb611.messages.{Response, Query}
-import com.github.willb611.objects.{Environment, TowerSpace}
+import com.github.willb611.messages.GenericMessages.{StateQuery, WinningColorQuery, defaultMessageTimeout}
+import com.github.willb611.messages.{Query, Response}
+import com.github.willb611.objects.{Environment, TowerSpace, TowerSpaceState}
 
 import scala.collection.mutable.ListBuffer
 import scala.concurrent.{Await, Future}
+import scala.language.postfixOps
 
 object GameHost {
   val ActorName: String = "gameHost"
   def props(gameConfig: GameConfig): Props = Props(new GameHost(gameConfig))
 
   // Messages
-  case class WinningColorQuery(maxTimeout: Timeout) extends Query
   object TowerSpacesQuery extends Query
   object BuilderCoordinatorsQuery extends Query
   // Responses
@@ -89,6 +90,8 @@ class GameHost(gameConfig: GameConfig)
       sender() ! response
     case BuilderCoordinatorsQuery =>
       sender() ! BuilderCoordinatorsResponse(coordinators.toList)
+    case StateQuery =>
+      sender() ! gameState()
   }
 
   def currentlyWinningColor(timeout: Timeout): Option[Color] = {
@@ -96,6 +99,15 @@ class GameHost(gameConfig: GameConfig)
     val result = colorCountMap.highestPercentColor()
     log.info(s"[currentlyWinningColor] From $colorCountMap got $result")
     result
+  }
+
+  def gameState(): GameState = {
+    var states: ListBuffer[TowerSpaceState] = ListBuffer()
+    for (towerSpace <- towerSpaces) {
+      val futureResponse = ask(towerSpace, StateQuery)(defaultMessageTimeout).mapTo[TowerSpaceState]
+      states += Await.result(futureResponse, defaultMessageTimeout.duration)
+    }
+    GameState(states.toList)
   }
 
   private def buildCountOfTowerColors(timeout: Timeout): CountOfColors = {

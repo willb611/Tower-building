@@ -10,7 +10,7 @@ Simulation written in Akka of 'Tower building', where builders place colored blo
 Need:
 - sbt installed
 - Java (tested with 8)
-
+coordinator
 ### Actually running it
 - Enter sbt prompt (i.e. type `sbt` in console)
 - `run` To run it

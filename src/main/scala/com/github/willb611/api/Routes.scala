@@ -22,5 +22,13 @@ trait Routes {
     )
   }
 
-  val serverRoutes: Route = helloWorldRoute ~ currentWinnerRoute
+  private val gameStateRoute: Route = (get & path("gameState") ) {
+    complete(
+      HttpEntity(
+        gameService.getGameState
+      )
+    )
+  }
+
+  val serverRoutes: Route = helloWorldRoute ~ currentWinnerRoute ~ gameStateRoute
 }

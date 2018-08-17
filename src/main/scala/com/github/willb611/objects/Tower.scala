@@ -2,6 +2,7 @@ package com.github.willb611.objects
 
 import akka.actor.{Actor, ActorLogging, ActorRef, Props, Timers}
 import com.github.willb611.ColorCollectionHelper.CountOfColors
+import com.github.willb611.messages.GenericMessages.StateQuery
 import com.github.willb611.messages.{Command, Query, Request}
 import com.github.willb611.objects.Environment.{ActorJoinEnvironmentAdvisory, ApplyEffectCommand}
 import com.github.willb611.objects.EnvironmentEffects.EnvironmentEffect
@@ -20,7 +21,7 @@ object Tower {
   final case class AddBlockRequest(colorToUseForBlocks: Color) extends Request
   private[willb611] final case object ProcessPendingBlocksCommand extends Command
 
-  final case object CountCountQuery extends Query
+  final case object ColourCountQuery extends Query
   final case object HeightQuery extends Query
   final case object LastColorQuery extends Query
 }
@@ -58,9 +59,11 @@ class Tower(parent: Option[ActorRef])
     case ProcessPendingBlocksCommand =>
       processPendingBlocks()
     // queries
-    case CountCountQuery =>
+    case ColourCountQuery =>
       sender() ! colorCount()
-      log.info(s"[receive] Received $CountCountQuery, current state: $toString")
+      log.info(s"[receive] Received $ColourCountQuery, current state: $toString")
+    case StateQuery =>
+      sender() ! TowerState(self.path.name, colorCount())
     case HeightQuery =>
       sender() ! height()
     case LastColorQuery =>

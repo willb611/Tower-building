@@ -5,10 +5,11 @@ import akka.pattern.ask
 import akka.util.Timeout
 import com.github.willb611.ColorCollectionHelper.{CountOfColors, countOfColorsFromOneColor}
 import com.github.willb611.builders.BuilderCoordinator.TowerListResponse
+import com.github.willb611.messages.GenericMessages.StateQuery
 import com.github.willb611.{Color, RestartKilledSupervisionStrategy, UnhandledMessagesLogged}
 import com.github.willb611.messages.Query
 import com.github.willb611.objects.Environment.ActorJoinEnvironmentAdvisory
-import com.github.willb611.objects.Tower.CountCountQuery
+import com.github.willb611.objects.Tower.ColourCountQuery
 import com.github.willb611.objects.TowerSpace.{CountOfTowersWithColorQuery, TowersInSpaceQuery}
 
 import scala.collection.mutable.ListBuffer
@@ -31,7 +32,7 @@ class TowerSpace(environment: ActorRef, towersToMake: Int)
     with UnhandledMessagesLogged {
   override val supervisorStrategy: SupervisorStrategy = RestartKilledSupervisionStrategy(super.supervisorStrategy).strategy
   private val towers = ListBuffer[ActorRef]()
-  private val timeoutWhenQueryingTowers: Timeout = Timeout(10 seconds)
+  private val timeoutWhenQueryingTowers: Timeout = Timeout(3 seconds)
   private val towerNameIterator = Iterator from 1 map (i => s"${Tower.ActorNamePrefix}-$i")
 
   override def preStart(): Unit = {
@@ -55,7 +56,7 @@ class TowerSpace(environment: ActorRef, towersToMake: Int)
 
   private def queryTowerForCurrentColorMajority(tower: ActorRef): Option[Color] = {
     try {
-      val query = CountCountQuery
+      val query = ColourCountQuery
       val gameHostResponse: Future[Any] = tower.ask(query)(timeoutWhenQueryingTowers)
       val resultAsTypeAny: Any = Await.result(gameHostResponse, timeoutWhenQueryingTowers.duration)
       val colorsFromTower = resultAsTypeAny.asInstanceOf[CountOfColors]
@@ -68,6 +69,15 @@ class TowerSpace(environment: ActorRef, towersToMake: Int)
     }
   }
 
+  def stateOfTowers(): Any = {
+    var towerStates: ListBuffer[TowerState] = ListBuffer()
+    for (tower <- towers) {
+      val futureResponse = ask(tower, StateQuery)(timeoutWhenQueryingTowers).mapTo[TowerState]
+      towerStates += Await.result(futureResponse, timeoutWhenQueryingTowers.duration)
+    }
+    TowerSpaceState(self.path.name, towerStates.toList)
+  }
+
   override def receive = {
     case advisory: ActorJoinEnvironmentAdvisory =>
       environment forward advisory
@@ -78,5 +88,7 @@ class TowerSpace(environment: ActorRef, towersToMake: Int)
       sender() ! combinedCount
     case TowersInSpaceQuery =>
       sender() ! TowerListResponse(towers.toList)
+    case StateQuery =>
+      sender() ! stateOfTowers()
   }
 }

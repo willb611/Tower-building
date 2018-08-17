@@ -57,7 +57,7 @@ class TowerSpec(_system: ActorSystem) extends TestKit(_system)
       addBlockToTower(GREEN, tower)
       tower ! HeightQuery
       expectMsg(waitTime, 3)
-      tower ! CountCountQuery
+      tower ! ColourCountQuery
       expectMsg(waitTime, ColorCollectionHelper.CountOfColors(Map(RED -> 2, GREEN -> 1)))
     }
     "report builder which placed block to parent given in constructor" in {
@@ -81,9 +81,9 @@ class TowerSpec(_system: ActorSystem) extends TestKit(_system)
       tower ! HeightQuery
       expectMsg(waitTime, 0)
     }
-    "Provide CountCountQuery" in {
+    "Provide ColourCountQuery" in {
       val tower = system.actorOf(Props[Tower])
-      tower ! CountCountQuery
+      tower ! ColourCountQuery
       expectMsg(waitTime, ColorCollectionHelper.CountOfColors(Map()))
     }
   }

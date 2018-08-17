@@ -3,8 +3,8 @@ package com.github.willb611
 import akka.actor.{ActorRef, ActorSystem}
 import akka.pattern.ask
 import akka.util.Timeout
-import com.github.willb611.GameHost.WinningColorQuery
 import com.github.willb611.api.ApiServer
+import com.github.willb611.messages.GenericMessages.{StateQuery, WinningColorQuery}
 import com.typesafe.scalalogging.LazyLogging
 
 import scala.concurrent.duration._
@@ -15,6 +15,7 @@ object TowerGame
   extends App
     with LazyLogging {
   final private val sleepTime = 10000
+  val gameStateTimeout: Timeout = Timeout(60 seconds)
   // main
   logger.info("[main] Hello world")
   private val actorSystem: ActorSystem = ActorSystem("TowerGame")
@@ -28,12 +29,23 @@ object TowerGame
   }
 
   def requestCurrentWinner() : Option[Color] = {
-    requestCurrentWinner(gameHost)
+    requestCurrentWinner(gameHost, WinningColorQuery())
   }
   private def requestCurrentWinner(gameHost: ActorRef) : Option[Color] = {
-    val timeout = Timeout(1 minute)
-    val query: WinningColorQuery = WinningColorQuery(timeout)
+    val query: WinningColorQuery = WinningColorQuery()
     requestCurrentWinner(gameHost, query)
+  }
+
+  def getGameStateSnapshot() : Option[GameState] = {
+    try {
+      val gameHostResponse: Future[Any] = gameHost.ask(StateQuery)(gameStateTimeout)
+      val resultAsTypeAny: Any = Await.result(gameHostResponse, gameStateTimeout.duration)
+      Option(resultAsTypeAny.asInstanceOf[GameState])
+    } catch {
+      case e: Exception =>
+        logger.error(s"[getGameStateSnapshot] Error: ${e.getMessage}, returning None", e)
+        None
+    }
   }
 
   private def requestCurrentWinner(gameHost: ActorRef, query: WinningColorQuery): Option[Color] = {
