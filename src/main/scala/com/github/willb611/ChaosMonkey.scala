@@ -48,6 +48,7 @@ class ChaosMonkey(random: Random, config: ChaosMonkeyConfig)
   override def preStart(): Unit = {
     timers.startPeriodicTimer(ChaosTimerKey, CauseChaos, config.intervalForChaos)
     timers.startPeriodicTimer(PollActorsForVictimsTimerKey, PollActorsForVictimsCommand, config.intervalToSeekNewVictims)
+    log.info("[preStart] Causing chaos..")
     super.preStart()
   }
 

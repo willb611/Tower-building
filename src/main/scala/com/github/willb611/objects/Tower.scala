@@ -61,7 +61,7 @@ class Tower(parent: Option[ActorRef])
     // queries
     case ColourCountQuery =>
       sender() ! colorCount()
-      log.info(s"[receive] Received $ColourCountQuery, current state: $toString")
+      log.debug(s"[receive] Received $ColourCountQuery, current state: $toString")
     case StateQuery =>
       sender() ! TowerState(self.path.name, colorCount())
     case HeightQuery =>
