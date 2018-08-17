@@ -1,7 +1,9 @@
 package com.github.willb611.api
 
-import com.github.willb611.{Color, TowerGame}
+import com.github.willb611.{Color, GameState, TowerGame}
 import com.typesafe.scalalogging.LazyLogging
+import spray.json._
+import JsonProtocolWithGameStates._
 
 class GameService
   extends LazyLogging {
@@ -14,8 +16,10 @@ class GameService
   }
 
   def getGameState: String = {
-    val state = TowerGame.getGameStateSnapshot()
-    logger.debug(s"[getGameState] Returning ${state.toString}")
-    state.toString
+    val stateOption: Option[GameState] = TowerGame.getGameStateSnapshot()
+    val state: GameState = stateOption.getOrElse(GameState(List()))
+    val result: String = state.toJson.compactPrint
+    logger.debug(s"[getGameState] Returning $result")
+    result
   }
 }

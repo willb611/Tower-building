@@ -28,7 +28,7 @@ object Color extends LazyLogging {
   }
 }
 
-class Color(val description: String, val ansiCode: String) {
+case class Color(description: String, ansiCode: String) {
   def this(description: String) = this(description, "")
   def this() = this("FFFFFF")
 
