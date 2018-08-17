@@ -2,10 +2,10 @@ package com.github.willb611.builders
 
 import akka.actor.{Actor, ActorLogging, ActorRef, Props, SupervisorStrategy, Timers}
 import com.github.willb611.GameHost.{TowerSpacesQuery, TowerSpacesResponse}
-import com.github.willb611.{Color, RandomHelper, RestartKilledSupervisionStrategy, UnhandledMessagesLogged}
+import com.github.willb611.{Color, RandomHelper, RestartKilledSupervisionStrategy}
 import com.github.willb611.builders.Builder.{DoWork, TowerToBuild, TowerToBuildQuery}
 import com.github.willb611.builders.BuilderCoordinator._
-import com.github.willb611.messages.{Command, Query, Request, Response}
+import com.github.willb611.messages._
 import com.github.willb611.objects.TowerSpace.TowersInSpaceQuery
 
 import scala.collection.mutable.ListBuffer

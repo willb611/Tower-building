@@ -1,4 +1,4 @@
-package com.github.willb611
+package com.github.willb611.messages
 
 import akka.actor.{Actor, ActorLogging}
 

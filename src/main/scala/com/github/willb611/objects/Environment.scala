@@ -1,8 +1,7 @@
 package com.github.willb611.objects
 
 import akka.actor.{Actor, ActorLogging, ActorRef, Props, Timers}
-import com.github.willb611.UnhandledMessagesLogged
-import com.github.willb611.messages.{Advisory, Command}
+import com.github.willb611.messages.{Advisory, Command, UnhandledMessagesLogged}
 import com.github.willb611.objects.Environment.{ActorJoinEnvironmentAdvisory, ApplyEffectCommand, ApplyEffectsToActors, EnvironmentEffectTimerKey}
 import com.github.willb611.objects.EnvironmentEffects.EnvironmentEffect
 

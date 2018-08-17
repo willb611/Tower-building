@@ -6,8 +6,8 @@ import akka.util.Timeout
 import com.github.willb611.ColorCollectionHelper.{CountOfColors, countOfColorsFromOneColor}
 import com.github.willb611.builders.BuilderCoordinator.TowerListResponse
 import com.github.willb611.messages.GenericMessages.StateQuery
-import com.github.willb611.{Color, RestartKilledSupervisionStrategy, UnhandledMessagesLogged}
-import com.github.willb611.messages.Query
+import com.github.willb611.{Color, RestartKilledSupervisionStrategy}
+import com.github.willb611.messages.{Query, UnhandledMessagesLogged}
 import com.github.willb611.objects.Environment.ActorJoinEnvironmentAdvisory
 import com.github.willb611.objects.Tower.ColourCountQuery
 import com.github.willb611.objects.TowerSpace.{CountOfTowersWithColorQuery, TowersInSpaceQuery}

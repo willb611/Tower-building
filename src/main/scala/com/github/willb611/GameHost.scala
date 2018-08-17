@@ -9,7 +9,7 @@ import com.github.willb611.GameHost._
 import com.github.willb611.builders.BuilderCoordinator
 import ColorCollectionHelper.CountOfColors
 import com.github.willb611.messages.GenericMessages.{StateQuery, WinningColorQuery, defaultMessageTimeout}
-import com.github.willb611.messages.{Query, Response}
+import com.github.willb611.messages.{Query, Response, UnhandledMessagesLogged}
 import com.github.willb611.objects.{Environment, TowerSpace, TowerSpaceState}
 
 import scala.collection.mutable.ListBuffer

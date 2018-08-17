@@ -3,11 +3,11 @@ package com.github.willb611.objects
 import akka.actor.{Actor, ActorLogging, ActorRef, Props, Timers}
 import com.github.willb611.ColorCollectionHelper.CountOfColors
 import com.github.willb611.messages.GenericMessages.StateQuery
-import com.github.willb611.messages.{Command, Query, Request}
+import com.github.willb611.messages.{Command, Query, Request, UnhandledMessagesLogged}
 import com.github.willb611.objects.Environment.{ActorJoinEnvironmentAdvisory, ApplyEffectCommand}
 import com.github.willb611.objects.EnvironmentEffects.EnvironmentEffect
 import com.github.willb611.objects.Tower._
-import com.github.willb611.{Color, ColorCollectionHelper, UnhandledMessagesLogged}
+import com.github.willb611.{Color, ColorCollectionHelper}
 
 import scala.concurrent.duration.{FiniteDuration, _}
 import scala.language.postfixOps

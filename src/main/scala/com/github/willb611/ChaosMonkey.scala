@@ -2,9 +2,9 @@ package com.github.willb611
 
 import akka.actor.{Actor, ActorLogging, ActorRef, Kill, Props, Timers}
 import com.github.willb611.ChaosMonkey._
-import com.github.willb611.GameHost.{BuilderCoordinatorsResponse, BuilderCoordinatorsQuery, TowerSpacesResponse, TowerSpacesQuery}
+import com.github.willb611.GameHost.{BuilderCoordinatorsQuery, BuilderCoordinatorsResponse, TowerSpacesQuery, TowerSpacesResponse}
 import com.github.willb611.builders.BuilderCoordinator.{BuilderListResponse, BuildersBeingCoordinatedQuery, TowerListResponse}
-import com.github.willb611.messages.Command
+import com.github.willb611.messages.{Command, UnhandledMessagesLogged}
 import com.github.willb611.objects.TowerSpace.TowersInSpaceQuery
 
 import scala.concurrent.duration.{FiniteDuration, _}
